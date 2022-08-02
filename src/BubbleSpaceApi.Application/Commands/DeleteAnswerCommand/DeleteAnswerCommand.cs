@@ -4,9 +4,11 @@ namespace BubbleSpaceApi.Application.Commands.DeleteAnswerCommand;
 
 public class DeleteAnswerCommand : IRequest<Unit>
 {
-    public Guid Id { get; set; }
-    public DeleteAnswerCommand(Guid id)
+    public long QuestionId { get; set; }
+    public Guid ProfileId { get; set; }
+    public DeleteAnswerCommand(long questionId, Guid profileId)
     {
-        Id = id;
+        QuestionId = questionId;
+        ProfileId = profileId;
     }
 }

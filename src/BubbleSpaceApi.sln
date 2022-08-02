@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BubbleSpaceApi.Infra", "Bub
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BubbleSpaceApi.Application", "BubbleSpaceApi.Application\BubbleSpaceApi.Application.csproj", "{045D318B-0B39-418C-B842-9295F7088936}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BubbleSpaceApi.Tests", "BubbleSpaceApi.Tests\BubbleSpaceApi.Tests.csproj", "{F1B05A56-138F-4C79-B3D9-D7C060DA2474}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{045D318B-0B39-418C-B842-9295F7088936}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{045D318B-0B39-418C-B842-9295F7088936}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{045D318B-0B39-418C-B842-9295F7088936}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1B05A56-138F-4C79-B3D9-D7C060DA2474}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1B05A56-138F-4C79-B3D9-D7C060DA2474}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1B05A56-138F-4C79-B3D9-D7C060DA2474}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1B05A56-138F-4C79-B3D9-D7C060DA2474}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
