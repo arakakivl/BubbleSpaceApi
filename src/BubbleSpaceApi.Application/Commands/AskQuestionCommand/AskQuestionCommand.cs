@@ -13,7 +13,7 @@ public class AskQuestionCommand : IRequest<long>
     {
         ProfileId = profileId;
 
-        Title = title.EndsWith("?") ? title.Trim().Replace("  ", " ") : title.Trim().Replace("  ", " ") + "?";
-        Description = description;
+        Title = title.EndsWith("?") ? title.Trim() : title.Trim() + "?";
+        Description = description.Trim();
     }
 }

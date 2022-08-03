@@ -59,7 +59,7 @@ public class DeleteQuestionCommandTests
         _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();
 
         // Assert
-        await Assert.ThrowsAsync(typeof(EntityNotFoundException), async () => await _sut.Handle(cmd, default));
+        await Assert.ThrowsAsync<EntityNotFoundException>( async () => await _sut.Handle(cmd, default));
 
         _unitOfWorkStub.Verify(x => x.QuestionRepository.DeleteAsync(qId), Times.Never);
         _unitOfWorkStub.Verify(x => x.SaveChangesAsync(), Times.Never);
@@ -80,7 +80,7 @@ public class DeleteQuestionCommandTests
         _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();
 
         // Assert
-        await Assert.ThrowsAsync(typeof(ForbiddenException), async () => await _sut.Handle(cmd, default));
+        await Assert.ThrowsAsync<ForbiddenException>(async () => await _sut.Handle(cmd, default));
 
         _unitOfWorkStub.Verify(x => x.QuestionRepository.DeleteAsync(qId), Times.Never);
         _unitOfWorkStub.Verify(x => x.SaveChangesAsync(), Times.Never);

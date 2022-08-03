@@ -1,4 +1,5 @@
 using BubbleSpaceApi.Application.Commands.LoginUserCommand;
+using BubbleSpaceApi.Application.Common;
 using BubbleSpaceApi.Core.Entities;
 using BubbleSpaceApi.Core.Interfaces;
 using Moq;
@@ -21,8 +22,8 @@ public class LoginUserCommandTests
     public async Task Handle_ShouldReturnTrue_WhenValidCredentials()
     {
         // Arrange
-        Account entity = new() { PasswordHash = "somePassHash" };
         var cmd = new LoginUserCommand("person", "validPassword");
+        Account entity = new() { PasswordHash = PasswordHashing.GeneratePasswordHash(cmd.Password) };
 
         _unitOfWorkStub.Setup(x => x.AccountRepository.GetByEmailAsync(cmd.UsernameOrEmail)).ReturnsAsync((Account?)null);
         _unitOfWorkStub.Setup(x => x.ProfileRepository.GetByUsernameAsync(cmd.UsernameOrEmail)).ReturnsAsync(new Profile() { AccountId = entity.Id, Account = entity });
@@ -38,8 +39,8 @@ public class LoginUserCommandTests
     public async Task Handle_ShouldReturnFalse_WhenInvalidCredentials()
     {
         // Arrange
-        Account entity = new() { PasswordHash = "somePassHash" };
         var cmd = new LoginUserCommand("person", "invalidPassword");
+        Account entity = new() { PasswordHash = PasswordHashing.GeneratePasswordHash("anotherPassword") };
 
         _unitOfWorkStub.Setup(x => x.AccountRepository.GetByEmailAsync(cmd.UsernameOrEmail)).ReturnsAsync((Account?)null);
         _unitOfWorkStub.Setup(x => x.ProfileRepository.GetByUsernameAsync(cmd.UsernameOrEmail)).ReturnsAsync(new Profile() { AccountId = entity.Id, Account = entity });

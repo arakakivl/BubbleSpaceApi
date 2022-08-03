@@ -1,3 +1,4 @@
+using BubbleSpaceApi.Application.Exceptions;
 using BubbleSpaceApi.Core.Interfaces;
 using MediatR;
 
@@ -11,8 +12,17 @@ public class DeleteQuestionCommandHandler : IRequestHandler<DeleteQuestionComman
         _unitOfWork = unitOfWork;
     }
     
-    public Task<Unit> Handle(DeleteQuestionCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(DeleteQuestionCommand request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var question = await _unitOfWork.QuestionRepository.GetEntityAsync(request.Id);
+        if (question is null)
+            throw new EntityNotFoundException("Pergunta não encontrada.");
+        else if (question.ProfileId != request.ProfileId)
+            throw new ForbiddenException("Ação não autorizada.");
+
+        await _unitOfWork.QuestionRepository.DeleteAsync(request.Id);
+        await _unitOfWork.SaveChangesAsync();
+
+        return Unit.Value;
     }
 }

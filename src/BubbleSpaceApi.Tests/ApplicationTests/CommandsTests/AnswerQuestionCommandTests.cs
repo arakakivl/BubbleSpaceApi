@@ -67,7 +67,7 @@ public class AnswerQuestionCommandTests
         _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();
 
         // Assert
-        await Assert.ThrowsAsync(typeof(AlreadyAnsweredQuestionException), async () => await _sut.Handle(cmd, default));
+        await Assert.ThrowsAsync<AlreadyAnsweredQuestionException>(async () => await _sut.Handle(cmd, default));
 
         _unitOfWorkStub.Verify(x => x.AnswerRepository.AddAsync(It.IsAny<Answer>()), Times.Never);
         _unitOfWorkStub.Verify(x => x.SaveChangesAsync(), Times.Never);
@@ -86,7 +86,7 @@ public class AnswerQuestionCommandTests
         _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();
 
         // Assert
-        await Assert.ThrowsAsync(typeof(AlreadyAnsweredQuestionException), async () => await _sut.Handle(cmd, default));
+        await Assert.ThrowsAsync<EntityNotFoundException>( async () => await _sut.Handle(cmd, default));
 
         _unitOfWorkStub.Verify(x => x.AnswerRepository.AddAsync(It.IsAny<Answer>()), Times.Never);
         _unitOfWorkStub.Verify(x => x.SaveChangesAsync(), Times.Never);

@@ -48,34 +48,6 @@ public class DeleteAnswerCommandTests
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowForbiddenException_WhenUserDoesNotOwnTheAnswer()
-    {
-        // Arrange
-        var pId = Guid.NewGuid();
-        var qId = 10;
-
-        var question = new Question()
-        {
-            Id = qId,
-            Answers = new List<Answer>().AsQueryable()
-        };
-
-        var cmd = new DeleteAnswerCommand(qId, pId);
-
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntityAsync(qId)).ReturnsAsync(question);
-
-        _unitOfWorkStub.Setup(x => x.AnswerRepository.DeleteAsync(It.IsAny<Guid>())).Verifiable();
-        _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();
-
-        // Assert
-        await Assert.ThrowsAsync(typeof(ForbiddenException), async () => await _sut.Handle(cmd, default));
-
-        _unitOfWorkStub.Verify(x => x.AnswerRepository.DeleteAsync(It.IsAny<Guid>()), Times.Never());
-        _unitOfWorkStub.Verify(x => x.SaveChangesAsync(), Times.Never());
-        
-    }
-
-    [Fact]
     public async Task Handle_ShouldThrowEntityNotFoundException_WhenInexistentQuestion()
     {
         // Arrange
@@ -96,7 +68,34 @@ public class DeleteAnswerCommandTests
         _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();
 
         // Assert
-        await Assert.ThrowsAsync(typeof(EntityNotFoundException), async () => await _sut.Handle(cmd, default));
+        await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _sut.Handle(cmd, default));
+
+        _unitOfWorkStub.Verify(x => x.AnswerRepository.DeleteAsync(It.IsAny<Guid>()), Times.Never());
+        _unitOfWorkStub.Verify(x => x.SaveChangesAsync(), Times.Never());
+    }
+
+    [Fact]
+    public async Task Handle_ShouldThrowEntityNotFoundException_WhenUserNotAnswered()
+    {
+        // Arrange
+        var pId = Guid.NewGuid();
+        var qId = 10;
+
+        var question = new Question()
+        {
+            Id = qId,
+            Answers = new List<Answer>().AsQueryable()
+        };
+
+        var cmd = new DeleteAnswerCommand(qId, pId);
+
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntityAsync(qId)).ReturnsAsync((Question?)null);
+
+        _unitOfWorkStub.Setup(x => x.AnswerRepository.DeleteAsync(It.IsAny<Guid>())).Verifiable();
+        _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();
+
+        // Assert
+        await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _sut.Handle(cmd, default));
 
         _unitOfWorkStub.Verify(x => x.AnswerRepository.DeleteAsync(It.IsAny<Guid>()), Times.Never());
         _unitOfWorkStub.Verify(x => x.SaveChangesAsync(), Times.Never());

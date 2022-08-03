@@ -1,3 +1,5 @@
+using BubbleSpaceApi.Application.Exceptions;
+using BubbleSpaceApi.Core.Entities;
 using BubbleSpaceApi.Core.Interfaces;
 using MediatR;
 
@@ -11,8 +13,25 @@ public class AnswerQuestionCommandHandler : IRequestHandler<AnswerQuestionComman
         _unitOfWork = unitOfWork;
     }
 
-    public Task<Unit> Handle(AnswerQuestionCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(AnswerQuestionCommand request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var question = await _unitOfWork.QuestionRepository.GetEntityAsync(request.QuestionId);
+        
+        if (question is null)
+            throw new EntityNotFoundException("Pergunta não encontrada.");
+        else if (question.Answers.SingleOrDefault(x => x.ProfileId == request.ProfileId) is not null)
+            throw new AlreadyAnsweredQuestionException("Pergunta já respondida.");
+        
+        var answer = new Answer()
+        {
+            ProfileId = request.ProfileId,
+            QuestionId = request.QuestionId,
+            Text = request.Text
+        };
+
+        await _unitOfWork.AnswerRepository.AddAsync(answer);
+        await _unitOfWork.SaveChangesAsync();
+
+        return Unit.Value;
     }
 }

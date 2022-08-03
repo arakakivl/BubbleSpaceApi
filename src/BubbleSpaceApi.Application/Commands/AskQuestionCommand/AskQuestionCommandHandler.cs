@@ -1,3 +1,4 @@
+using BubbleSpaceApi.Core.Entities;
 using BubbleSpaceApi.Core.Interfaces;
 using MediatR;
 
@@ -11,8 +12,19 @@ public class AskQuestionCommandHandler : IRequestHandler<AskQuestionCommand, lon
         _unitOfWork = unitOfWork;
     }
     
-    public Task<long> Handle(AskQuestionCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(AskQuestionCommand request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        Question q = new()
+        {
+            Title = request.Title,
+            Description = request.Description,
+            ProfileId = request.ProfileId
+        };
+
+        // Auto generated id
+        var id = (await _unitOfWork.QuestionRepository.AddAsync(q));
+        await _unitOfWork.SaveChangesAsync();
+
+        return id;
     }
 }

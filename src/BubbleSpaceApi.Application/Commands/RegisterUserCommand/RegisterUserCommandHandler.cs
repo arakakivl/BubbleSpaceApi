@@ -1,5 +1,8 @@
+using System.Security.Cryptography;
+using BubbleSpaceApi.Core.Entities;
 using BubbleSpaceApi.Core.Interfaces;
 using MediatR;
+using BubbleSpaceApi.Application.Common;
 
 namespace BubbleSpaceApi.Application.Commands.RegisterUserCommand;
 
@@ -11,8 +14,25 @@ public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, U
         _unitOfWork = unitOfWork;
     }
     
-    public Task<Unit> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var account = new Account()
+        {
+            Email = request.Email,
+            PasswordHash = PasswordHashing.GeneratePasswordHash(request.Password)
+        };
+
+        var profile = new Profile()
+        {
+            AccountId = account.Id,
+            Username = request.Username.Trim().Replace("  ", " "),
+        };
+
+        await _unitOfWork.AccountRepository.AddAsync(account);
+        await _unitOfWork.ProfileRepository.AddAsync(profile);
+
+        await _unitOfWork.SaveChangesAsync();
+
+        return Unit.Value;
     }
 }

@@ -1,3 +1,4 @@
+using BubbleSpaceApi.Application.Exceptions;
 using BubbleSpaceApi.Core.Interfaces;
 using MediatR;
 
@@ -11,8 +12,19 @@ public class DeleteAnswerCommandHandler : IRequestHandler<DeleteAnswerCommand, U
         _unitOfWork = unitOfWork;
     }
 
-    public Task<Unit> Handle(DeleteAnswerCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(DeleteAnswerCommand request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var question = await _unitOfWork.QuestionRepository.GetEntityAsync(request.QuestionId);
+        var answer = question?.Answers.SingleOrDefault(x => x.ProfileId == request.ProfileId);
+
+        if (question is null)
+            throw new EntityNotFoundException("Pergunta não encontrada.");
+        else if (answer is null)
+            throw new EntityNotFoundException("Resposta não encontrada.");
+
+        await _unitOfWork.AnswerRepository.DeleteAsync(answer.Id);
+        await _unitOfWork.SaveChangesAsync();
+
+        return Unit.Value;
     }
 }
