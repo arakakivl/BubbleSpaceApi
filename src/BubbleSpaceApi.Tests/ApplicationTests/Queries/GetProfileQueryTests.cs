@@ -24,7 +24,9 @@ public class GetProfileQueryTests
     {
         // Arrange
         var username = "someUsername";
-        _unitOfWorkStub.Setup(x => x.ProfileRepository.GetByUsernameAsync(username)).ReturnsAsync(new Profile());
+        _unitOfWorkStub.Setup(x => x.ProfileRepository.GetByUsernameAsync(username))
+            .ReturnsAsync(new Profile()
+            {});
 
         var query = new GetProfileQuery(username);
 

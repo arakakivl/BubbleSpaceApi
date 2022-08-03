@@ -1,5 +1,7 @@
+using BubbleSpaceApi.Application.Exceptions;
 using BubbleSpaceApi.Application.Models.ViewModels;
 using BubbleSpaceApi.Core.Interfaces;
+using BubbleSpaceAPi.Application.Common;
 using MediatR;
 
 namespace BubbleSpaceApi.Application.Queries.GetQuestionQuery;
@@ -12,8 +14,12 @@ public class GetQuestionQueryHandler : IRequestHandler<GetQuestionQuery, Questio
         _unitOfWork = unitOfWork;
     }
 
-    public Task<QuestionViewModel> Handle(GetQuestionQuery request, CancellationToken cancellationToken)
+    public async Task<QuestionViewModel> Handle(GetQuestionQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var question = await _unitOfWork.QuestionRepository.GetEntityAsync(request.Id);
+        if (question is null)
+            throw new EntityNotFoundException("Pergunta não encontrada.");
+        
+        return question.AsViewModel();
     }
 }
