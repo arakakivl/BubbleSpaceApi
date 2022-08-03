@@ -23,6 +23,10 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Question>()
             .HasKey(k => k.Id);
         
+        modelBuilder.Entity<Question>()
+            .Property(x => x.Id)
+                .ValueGeneratedOnAdd();
+
         modelBuilder.Entity<Answer>()
             .HasKey(k => k.Id);
         #endregion
