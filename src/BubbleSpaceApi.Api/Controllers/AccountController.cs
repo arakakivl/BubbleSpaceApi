@@ -5,8 +5,14 @@ using BubbleSpaceApi.Application.Models.InputModels.LoginUserInputModel;
 
 namespace BubbleSpaceApi.Api.Controllers;
 
-public class AccountController : BaseSenderController
+public class AccountController
 {
+    private readonly ISender _sender;
+    public AccountController(ISender sender)
+    {
+        _sender = sender;
+    }
+    
     [HttpPost("signup")]
     public async Task<IActionResult> SignUpAsync([FromBody] RegisterUserInputModel model)
     {

@@ -1,9 +1,16 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BubbleSpaceApi.Api.Controllers;
 
-public class QuestionsController : BaseSenderController
+public class QuestionsController
 {
+    private readonly ISender _sender;
+    public QuestionsController(ISender sender)
+    {
+        _sender = sender;
+    }
+    
     [HttpPost("ask")]
     public async Task<IActionResult> AskAsync()
     {
