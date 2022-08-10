@@ -53,7 +53,7 @@ public class AccountControllerTests
             Password = "someuser123"
         };
 
-        _senderStub.Setup(x => x.Send(It.IsAny<LoginUserCommand>(), default)).ReturnsAsync(true);
+        _senderStub.Setup(x => x.Send(It.IsAny<LoginUserCommand>(), default)).ReturnsAsync(Guid.NewGuid());
 
         // Act
         var result = await _sut.SignInAsync(model);
@@ -72,7 +72,7 @@ public class AccountControllerTests
             Password = "someuser123"
         };
 
-        _senderStub.Setup(x => x.Send(It.IsAny<LoginUserCommand>(), default)).ReturnsAsync(false);
+        _senderStub.Setup(x => x.Send(It.IsAny<LoginUserCommand>(), default)).ReturnsAsync(Guid.Empty);
 
         // Act
         var result = await _sut.SignInAsync(model);

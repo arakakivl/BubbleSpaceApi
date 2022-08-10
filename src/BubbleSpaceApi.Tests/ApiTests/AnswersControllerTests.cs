@@ -22,7 +22,7 @@ public class AnswersControllerTests
     }
 
     [Fact]
-    public async Task AnswerAsync_ShouldReturnCreatedAt_WhenUserDoesNotAnsweredYet()
+    public async Task AnswerAsync_ShouldReturnOk_WhenUserDoesNotAnsweredYet()
     {
         // Arrange
         var qId = 4;
@@ -32,7 +32,7 @@ public class AnswersControllerTests
         var result = (await _sut.AnswerAsync(qId, model)) as CreatedAtRouteResult;
 
         // Assert
-        Assert.IsType<CreatedAtRouteResult>(result);
+        Assert.IsType<OkResult>(result);
 
         Assert.NotNull(result!.Value);
         Assert.IsType<AnswerViewModel>(result.Value);
@@ -88,7 +88,7 @@ public class AnswersControllerTests
     {
         // Arrange
         var qId = 4;
-        _senderStub.Setup(x => x.Send(It.IsAny<AnswerQuestionCommand>(), default)).ThrowsAsync(new AlreadyAnsweredQuestionException("Question or answer not found."));
+        _senderStub.Setup(x => x.Send(It.IsAny<AnswerQuestionCommand>(), default)).ThrowsAsync(new EntityNotFoundException("Question or answer not found."));
         
         // Act
         var result = await _sut.DeleteAsync(qId);

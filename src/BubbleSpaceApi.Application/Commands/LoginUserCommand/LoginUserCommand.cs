@@ -2,7 +2,7 @@ using MediatR;
 
 namespace BubbleSpaceApi.Application.Commands.LoginUserCommand;
 
-public class LoginUserCommand : IRequest<bool>
+public class LoginUserCommand : IRequest<Guid>
 {
     public string UsernameOrEmail { get; }
     public string Password { get; }

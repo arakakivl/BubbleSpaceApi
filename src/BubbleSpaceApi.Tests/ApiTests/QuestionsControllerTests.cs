@@ -31,16 +31,14 @@ public class QuestionsControllerTests
         _senderStub.Setup(x => x.Send(It.IsAny<AskQuestionCommand>(), default)).ReturnsAsync(id);
 
         // Act
-        
-        // var result = await _sut.AskAsync(id);
-        var result = await _sut.AskAsync();
+        var result = await _sut.AskAsync(new AskQuestionInputModel() { Title = "Who is here?", Description = "" });
         var okResult = result as CreatedAtRouteResult;
 
         // Assert
         Assert.IsType<CreatedAtRouteResult>(result);
         
         Assert.NotNull(okResult?.Value);
-        Assert.IsType<long>(okResult?.Value);
+        Assert.IsType<QuestionViewModel>(okResult?.Value);
     }
 
     [Fact]

@@ -1,3 +1,4 @@
+using BubbleSpaceApi.Application.Models.InputModels.AskQuestionModel;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,7 +13,7 @@ public class QuestionsController
     }
     
     [HttpPost("ask")]
-    public async Task<IActionResult> AskAsync()
+    public async Task<IActionResult> AskAsync([FromBody] AskQuestionInputModel model)
     {
         throw new NotImplementedException();
     }
