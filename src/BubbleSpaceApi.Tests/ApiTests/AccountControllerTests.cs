@@ -3,6 +3,7 @@ using BubbleSpaceApi.Application.Commands.LoginUserCommand;
 using BubbleSpaceApi.Application.Models.InputModels.LoginUserInputModel;
 using BubbleSpaceApi.Application.Models.InputModels.RegisterUserModel;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -17,7 +18,7 @@ public class AccountControllerTests
     public AccountControllerTests()
     {
         _senderStub = new();
-        _sut = new(_senderStub.Object);
+        _sut = new(_senderStub.Object) { ControllerContext = new() { HttpContext = new DefaultHttpContext() } };
     }
 
     /* 

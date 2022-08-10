@@ -27,7 +27,7 @@ public static class Auth
             {
                 new Claim("Id", profileId.ToString())
             }),
-            Expires = DateTime.Now.AddHours(double.Parse(_config.GetSection("Auth:AccessExpiration").Value)),
+            Expires = DateTime.UtcNow.AddHours(double.Parse(_config.GetSection("Auth:AccessExpiration").Value)),
             Audience = _config.GetSection("Auth:Audience").Value,
             Issuer = _config.GetSection("Auth:Issuer").Value,
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -52,7 +52,9 @@ public static class Auth
             ValidateIssuer = true,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.GetSection("Auth:Secret").Value)),
-            ValidateLifetime = true
+            ValidateLifetime = true,
+            ValidAudience = _config.GetSection("Auth:Audience").Value,
+            ValidIssuer = _config.GetSection("Auth:Issuer").Value
         };
 
         var handler = new JwtSecurityTokenHandler();
