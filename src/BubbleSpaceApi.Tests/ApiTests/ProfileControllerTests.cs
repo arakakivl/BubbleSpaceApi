@@ -53,6 +53,6 @@ public class ProfileControllerTests
         var result = await _sut.GetByUsernameAsync(username);
 
         // Assert
-        Assert.IsType<BadRequestObjectResult>(result);
+        Assert.IsType<NotFoundObjectResult>(result);
     }
 }

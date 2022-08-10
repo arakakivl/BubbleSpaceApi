@@ -1,9 +1,15 @@
+using BubbleSpaceApi.Application.Exceptions;
+using BubbleSpaceApi.Application.Queries.GetProfileQuery;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BubbleSpaceApi.Api.Controllers;
 
-public class ProfileController
+[AllowAnonymous]
+[ApiController]
+[Route("/profile")]
+public class ProfileController : ControllerBase
 {
     private readonly ISender _sender;
     public ProfileController(ISender sender)
@@ -14,6 +20,16 @@ public class ProfileController
     [HttpGet("{username}")]
     public async Task<IActionResult> GetByUsernameAsync([FromQuery] string? username)
     {
-        throw new NotImplementedException();
+        var cmd = new GetProfileQuery(username ??= "");
+        
+        try
+        {
+            var profile = await _sender.Send(cmd);
+            return Ok(profile);
+        }
+        catch (EntityNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
     }
 }
