@@ -5,18 +5,15 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BubbleSpaceApi.Api.Auth;
 
-public static class Auth
+public class Auth : IAuth
 {
-    private static readonly IConfiguration _config;
-    static Auth()
+    private readonly IConfiguration _config;
+    Auth(IConfiguration config)
     {
-        _config = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                    .Build();
+        _config = config;
     }
 
-    public static string GenerateJwtToken(Guid profileId)
+    public string GenerateJwtToken(Guid profileId)
     {
         var handler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_config.GetSection("Auth:Secret").Value);
@@ -37,12 +34,12 @@ public static class Auth
         return handler.WriteToken(token);
     }
 
-    public static string GenerateRefreshToken()
+    public string GenerateRefreshToken()
     {
         return Guid.NewGuid().ToString();
     }
 
-    public static Guid GetProfileIdFromToken(this HttpContext context)
+    public Guid GetProfileIdFromToken(HttpContext context)
     {
         var cookie = context.Request.Cookies.SingleOrDefault(x => x.Key == "bsacc");
 

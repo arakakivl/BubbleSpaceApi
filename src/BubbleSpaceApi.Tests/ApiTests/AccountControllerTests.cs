@@ -1,3 +1,4 @@
+using BubbleSpaceApi.Api.Auth;
 using BubbleSpaceApi.Api.Controllers;
 using BubbleSpaceApi.Application.Commands.LoginUserCommand;
 using BubbleSpaceApi.Application.Models.InputModels.LoginUserInputModel;
@@ -13,21 +14,26 @@ namespace BubbleSpaceApi.Tests.ApiTests;
 public class AccountControllerTests
 {
     private readonly Mock<ISender> _senderStub;
+    private readonly Mock<IAuth> _authStub;
+
     private readonly AccountController _sut;
 
     public AccountControllerTests()
     {
         _senderStub = new();
-        _sut = new(_senderStub.Object) { ControllerContext = new() { HttpContext = new DefaultHttpContext() } };
+        _authStub = new();
+
+        _sut = new(_senderStub.Object, _authStub.Object)
+        {
+            ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext()
+            }
+        };
     }
 
-    /* 
-        Some method endpoints cannot be executed if their model isn't on the required pattern
-        By FluentValidations 
-    */
-
     [Fact]
-    public async Task RegisterAsync_ShouldReturnOk_IfExecuted()
+    public async Task RegisterAsync_ShouldReturnOk_WhenExecuted()
     {
         // Arrange
         var model = new RegisterUserInputModel()
@@ -54,7 +60,12 @@ public class AccountControllerTests
             Password = "someuser123"
         };
 
-        _senderStub.Setup(x => x.Send(It.IsAny<LoginUserCommand>(), default)).ReturnsAsync(Guid.NewGuid());
+        var profId = Guid.NewGuid();
+
+        _senderStub.Setup(x => x.Send(It.IsAny<LoginUserCommand>(), default)).ReturnsAsync(profId);
+
+        _authStub.Setup(x => x.GenerateJwtToken(profId)).Returns(Guid.NewGuid().ToString());
+        _authStub.Setup(x => x.GenerateRefreshToken()).Returns(Guid.NewGuid().ToString());
 
         // Act
         var result = await _sut.SignInAsync(model);

@@ -15,9 +15,11 @@ namespace BubbleSpaceApi.Api.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly ISender _sender;
-    public AccountController(ISender sender)
+    private readonly IAuth _auth;
+    public AccountController(ISender sender, IAuth auth)
     {
         _sender = sender;
+        _auth = auth;
     }
     
     [HttpPost("signup")]
@@ -46,12 +48,12 @@ public class AccountController : ControllerBase
             return BadRequest("Usuário, email ou senha inválidos.");
         
         // Cookies config
-        HttpContext.Response.Cookies.Append("bsacc", BubbleSpaceApi.Api.Auth.Auth.GenerateJwtToken(profileId), new CookieOptions() 
+        HttpContext.Response.Cookies.Append("bsacc", _auth.GenerateJwtToken(profileId), new CookieOptions() 
         {
             HttpOnly = false
         });
 
-        HttpContext.Response.Cookies.Append("bsrfh", BubbleSpaceApi.Api.Auth.Auth.GenerateRefreshToken(), new CookieOptions() 
+        HttpContext.Response.Cookies.Append("bsrfh", _auth.GenerateRefreshToken(), new CookieOptions() 
         {
             HttpOnly = true
         });
