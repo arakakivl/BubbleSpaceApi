@@ -1,5 +1,7 @@
+using BubbleSpaceApi.Api.Auth;
 using BubbleSpaceApi.Api.Controllers;
 using BubbleSpaceApi.Application.Commands.AskQuestionCommand;
+using BubbleSpaceApi.Application.Commands.DeleteQuestionCommand;
 using BubbleSpaceApi.Application.Exceptions;
 using BubbleSpaceApi.Application.Models.InputModels.AskQuestionModel;
 using BubbleSpaceApi.Application.Models.ViewModels;
@@ -15,12 +17,16 @@ namespace BubbleSpaceApi.Tests.ApiTests;
 public class QuestionsControllerTests
 {
     private readonly Mock<ISender> _senderStub;
+    private readonly Mock<IAuth> _authStub;
+
     private readonly QuestionsController _sut;
 
     public QuestionsControllerTests()
     {
         _senderStub = new();
-        _sut = new(_senderStub.Object);
+        _authStub = new();
+
+        _sut = new(_senderStub.Object, _authStub.Object);
     }
 
     [Fact]
@@ -28,7 +34,11 @@ public class QuestionsControllerTests
     {
         // Arrange
         long id = 4;
+
+        _authStub.Setup(x => x.GetProfileIdFromToken(_sut.HttpContext)).Returns(Guid.NewGuid());
         _senderStub.Setup(x => x.Send(It.IsAny<AskQuestionCommand>(), default)).ReturnsAsync(id);
+
+        _senderStub.Setup(x => x.Send(It.IsAny<GetQuestionQuery>(), default)).ReturnsAsync(new QuestionViewModel());
 
         // Act
         var result = await _sut.AskAsync(new AskQuestionInputModel() { Title = "Who is here?", Description = "" });
@@ -48,11 +58,11 @@ public class QuestionsControllerTests
         _senderStub.Setup(x => x.Send(It.IsAny<GetQuestionsQuery>(), default)).ReturnsAsync(new List<QuestionViewModel>().AsQueryable());
 
         // Act
-        var result = await _sut.GetallAsync();
+        var result = await _sut.GetAllAsync();
         var okResult = result as OkObjectResult;
 
         // Assert
-        Assert.IsType<OkResult>(okResult);
+        Assert.IsType<OkObjectResult>(okResult);
         Assert.IsAssignableFrom<IQueryable<QuestionViewModel>>(okResult?.Value);
     }
 
@@ -92,7 +102,7 @@ public class QuestionsControllerTests
     {
         // Arrange
         var id = 20;
-        _senderStub.Setup(x => x.Send(It.IsAny<GetQuestionQuery>(), default)).ReturnsAsync(new QuestionViewModel() { Id = id });
+        _authStub.Setup(x => x.GetProfileIdFromToken(_sut.HttpContext)).Returns(Guid.NewGuid());
 
         // Act
         var result = await _sut.DeleteAsync(id);
@@ -106,7 +116,9 @@ public class QuestionsControllerTests
     {
         // Arrange
         var id = 20;
-        _senderStub.Setup(x => x.Send(It.IsAny<GetQuestionQuery>(), default)).ThrowsAsync(new ForbiddenException("User does not own the question."));
+
+        _authStub.Setup(x => x.GetProfileIdFromToken(_sut.HttpContext)).Returns(Guid.NewGuid());
+        _senderStub.Setup(x => x.Send(It.IsAny<DeleteQuestionCommand>(), default)).ThrowsAsync(new EntityNotFoundException("Not found question."));
 
         // Act
         var result = await _sut.DeleteAsync(id);
@@ -120,7 +132,9 @@ public class QuestionsControllerTests
     {
         // Arrange
         var id = 20;
-        _senderStub.Setup(x => x.Send(It.IsAny<GetQuestionQuery>(), default)).ThrowsAsync(new EntityNotFoundException("Not found question."));
+
+        _authStub.Setup(x => x.GetProfileIdFromToken(_sut.HttpContext)).Returns(Guid.NewGuid());
+        _senderStub.Setup(x => x.Send(It.IsAny<DeleteQuestionCommand>(), default)).ThrowsAsync(new ForbiddenException("User does not own the question."));
 
         // Act
         var result = await _sut.DeleteAsync(id);
