@@ -7,6 +7,7 @@ using BubbleSpaceApi.Core.Interfaces.Repositories;
 using BubbleSpaceApi.Infra.Persistence;
 using BubbleSpaceApi.Infra.Persistence.Repositories;
 using FluentValidation;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,9 @@ builder.Services.AddAuthentication(x => {
 });
 
 builder.Services.AddTransient<IAuth, Auth>();
+
+// In order to use automatic validations, we can't use async rules for our validators!
+builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddControllers();
 
