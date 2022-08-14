@@ -8,7 +8,7 @@ namespace BubbleSpaceApi.Api.Auth;
 public class Auth : IAuth
 {
     private readonly IConfiguration _config;
-    Auth(IConfiguration config)
+    public Auth(IConfiguration config)
     {
         _config = config;
     }
