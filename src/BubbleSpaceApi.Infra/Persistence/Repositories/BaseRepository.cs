@@ -19,9 +19,9 @@ public class BaseRepository<TKey, TEntity> : IBaseRepository<TKey, TEntity> wher
         return await Task.FromResult(entity.Id);
     }
 
-    public async Task<IQueryable<TEntity>> GetEntitiesAsync()
+    public async Task<ICollection<TEntity>> GetEntitiesAsync()
     {
-        return await Task.FromResult(_dbSet.AsQueryable());
+        return await Task.FromResult(_dbSet.ToList());
     }
 
     public async Task<TEntity?> GetEntityAsync(TKey key)

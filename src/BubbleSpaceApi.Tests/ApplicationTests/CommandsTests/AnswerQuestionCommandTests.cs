@@ -28,7 +28,7 @@ public class AnswerQuestionCommandTests
         Question question = new()
         {
             Id = qId,
-            Answers = new List<Answer>().AsQueryable()   
+            Answers = new List<Answer>()  
         };
 
         AnswerQuestionCommand cmd = new(qId, pId, "some answer");
@@ -56,7 +56,7 @@ public class AnswerQuestionCommandTests
         Question question = new()
         {
             Id = qId,
-            Answers = new List<Answer>() { new Answer() { ProfileId = pId }}.AsQueryable()   
+            Answers = new List<Answer>() { new Answer() { ProfileId = pId }}   
         };
 
         AnswerQuestionCommand cmd = new(qId, pId, "some answer");

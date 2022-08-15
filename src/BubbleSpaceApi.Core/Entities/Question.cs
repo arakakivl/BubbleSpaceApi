@@ -9,7 +9,7 @@ public class Question : IBaseEntity<long>
     public string Title { get; set; } = null!;
     public string Description { get; set; } = "";
 
-    public IQueryable<Answer> Answers { get; set; } = new List<Answer>().AsQueryable();
+    public ICollection<Answer> Answers { get; set; } = new List<Answer>();
 
     public Guid ProfileId { get; set; }
     public Profile Profile { get; set; } = null!;

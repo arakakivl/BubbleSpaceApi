@@ -3,7 +3,7 @@ using MediatR;
 
 namespace BubbleSpaceApi.Application.Queries.GetQuestionsQuery;
 
-public class GetQuestionsQuery : IRequest<IQueryable<QuestionViewModel>>
+public class GetQuestionsQuery : IRequest<ICollection<QuestionViewModel>>
 {
     
 }

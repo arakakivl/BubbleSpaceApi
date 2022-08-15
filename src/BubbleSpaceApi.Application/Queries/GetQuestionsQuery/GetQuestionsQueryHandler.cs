@@ -5,7 +5,7 @@ using MediatR;
 
 namespace BubbleSpaceApi.Application.Queries.GetQuestionsQuery;
 
-public class GetQuestionsQueryHandler : IRequestHandler<GetQuestionsQuery, IQueryable<QuestionViewModel>>
+public class GetQuestionsQueryHandler : IRequestHandler<GetQuestionsQuery, ICollection<QuestionViewModel>>
 {
     private readonly IUnitOfWork _unitOfWork;
     public GetQuestionsQueryHandler(IUnitOfWork unitOfWork)
@@ -13,9 +13,8 @@ public class GetQuestionsQueryHandler : IRequestHandler<GetQuestionsQuery, IQuer
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IQueryable<QuestionViewModel>> Handle(GetQuestionsQuery request, CancellationToken cancellationToken)
+    public async Task<ICollection<QuestionViewModel>> Handle(GetQuestionsQuery request, CancellationToken cancellationToken)
     {
-        // TODO: get questions in function of the last id and the
-        return (await _unitOfWork.QuestionRepository.GetEntitiesAsync()).Select(x => x.AsViewModel());
+        return (await _unitOfWork.QuestionRepository.GetEntitiesAsync()).Select(x => x.AsViewModel()).ToList();
     }
 }

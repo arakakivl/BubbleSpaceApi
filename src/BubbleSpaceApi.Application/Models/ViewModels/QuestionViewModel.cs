@@ -9,5 +9,5 @@ public class QuestionViewModel
     public string Title { get; set; } = null!;
     public string Description { get; set; } = "";
 
-    public IQueryable<AnswerViewModel> Answers { get; set; } = null!;
+    public ICollection<AnswerViewModel> Answers { get; set; } = new List<AnswerViewModel>();
 }

@@ -29,7 +29,7 @@ public class DeleteAnswerCommandTests
         var question = new Question()
         {
             Id = qId,
-            Answers = new List<Answer>() { new() { ProfileId = pId } }.AsQueryable()
+            Answers = new List<Answer>() { new() { ProfileId = pId } }
         };
 
         var cmd = new DeleteAnswerCommand(qId, pId);
@@ -57,7 +57,7 @@ public class DeleteAnswerCommandTests
         var question = new Question()
         {
             Id = qId,
-            Answers = new List<Answer>() { new() { ProfileId = pId } }.AsQueryable()
+            Answers = new List<Answer>() { new() { ProfileId = pId } }
         };
 
         var cmd = new DeleteAnswerCommand(qId, pId);
@@ -84,7 +84,7 @@ public class DeleteAnswerCommandTests
         var question = new Question()
         {
             Id = qId,
-            Answers = new List<Answer>().AsQueryable()
+            Answers = new List<Answer>()
         };
 
         var cmd = new DeleteAnswerCommand(qId, pId);

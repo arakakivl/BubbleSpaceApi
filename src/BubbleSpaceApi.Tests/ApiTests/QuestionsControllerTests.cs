@@ -55,7 +55,7 @@ public class QuestionsControllerTests
     public async Task GetAllAsync_ShouldReturnOkWithQuestions_WhenExecuted()
     {
         // Arrange
-        _senderStub.Setup(x => x.Send(It.IsAny<GetQuestionsQuery>(), default)).ReturnsAsync(new List<QuestionViewModel>().AsQueryable());
+        _senderStub.Setup(x => x.Send(It.IsAny<GetQuestionsQuery>(), default)).ReturnsAsync(new List<QuestionViewModel>());
 
         // Act
         var result = await _sut.GetAllAsync();
@@ -63,7 +63,7 @@ public class QuestionsControllerTests
 
         // Assert
         Assert.IsType<OkObjectResult>(okResult);
-        Assert.IsAssignableFrom<IQueryable<QuestionViewModel>>(okResult?.Value);
+        Assert.IsAssignableFrom<ICollection<QuestionViewModel>>(okResult?.Value);
     }
 
     [Fact]

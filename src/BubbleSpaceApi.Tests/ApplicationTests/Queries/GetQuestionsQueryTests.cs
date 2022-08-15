@@ -22,13 +22,13 @@ public class GetQuestionsQueryTests
     public async Task Handle_ShouldReturnQuestions_WhenExecuted()
     {
         // Arrange
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync()).ReturnsAsync(new List<Question>().AsQueryable());
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync()).ReturnsAsync(new List<Question>());
         var query = new GetQuestionsQuery();
 
         // Act
         var result = await _sut.Handle(query, default);
 
         // Assert
-        Assert.IsAssignableFrom<IQueryable<QuestionViewModel>>(result);
+        Assert.IsAssignableFrom<ICollection<QuestionViewModel>>(result);
     }
 }
