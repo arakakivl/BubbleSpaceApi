@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using BubbleSpaceApi.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,29 +14,44 @@ public class BaseRepository<TKey, TEntity> : IBaseRepository<TKey, TEntity> wher
         _dbSet = context.Set<TEntity>();
     }
 
-    public async Task<TKey> AddAsync(TEntity entity)
+    public virtual async Task<TKey> AddAsync(TEntity entity)
     {
         _dbSet.Add(entity);
         return await Task.FromResult(entity.Id);
     }
 
-    public async Task<ICollection<TEntity>> GetEntitiesAsync()
+    public virtual async Task<ICollection<TEntity>> GetEntitiesAsync()
     {
         return await Task.FromResult(_dbSet.ToList());
     }
 
-    public async Task<TEntity?> GetEntityAsync(TKey key)
+    public virtual async Task<ICollection<TEntity>> GetEntitiesAsync(Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, string includeProperties = "")
+    {
+        IQueryable<TEntity> query = _dbSet;
+        if (filter is not null)
+            query = query.Where(filter);
+        
+        foreach(var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            query = query.Include(includeProp);
+        
+        if (orderBy is not null)
+            return await Task.FromResult(orderBy(query).ToList());
+        else
+            return await Task.FromResult(query.ToList());
+    }
+
+    public virtual async Task<TEntity?> GetEntityAsync(TKey key)
     {
         return await _dbSet.FindAsync(key);
     }
 
-    public async Task UpdateAsync(TEntity entity)
+    public virtual async Task UpdateAsync(TEntity entity)
     {
         _dbSet.Update(entity);
         await Task.CompletedTask;
     }
 
-    public async Task DeleteAsync(TKey key)
+    public virtual async Task DeleteAsync(TKey key)
     {
         var entity = await _dbSet.FindAsync(key);
         _dbSet.Remove(entity!);
