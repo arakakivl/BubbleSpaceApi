@@ -11,8 +11,6 @@ public class AccountRepository : BaseRepository<Guid, Account>, IAccountReposito
 
     }
 
-    public async Task<Account?> GetByEmailAsync(string email)
-    {
-        return await Task.FromResult(DbSet.Include(x => x.Profile).SingleOrDefault(x => x.Email == email));
-    }
+    public async Task<Account?> GetByEmailAsync(string email) =>
+        (await this.GetEntitiesAsync(acc => acc.Email.ToLower() == email.ToLower(), "Profile")).SingleOrDefault();
 }

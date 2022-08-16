@@ -11,8 +11,6 @@ public class ProfileRepository : BaseRepository<Guid, Profile>, IProfileReposito
 
     }
 
-    public async Task<Profile?> GetByUsernameAsync(string username)
-    {
-        return await Task.FromResult(DbSet.Include(x => x.Account).Include(x => x.Questions).Include(x => x.Answers).SingleOrDefault(x => x.Username.ToLower() == username.ToLower()));
-    }
+    public async Task<Profile?> GetByUsernameAsync(string username) =>
+        (await this.GetEntitiesAsync(prof => prof.Username.ToLower() == username.ToLower(), "Account,Questions,Answers")).SingleOrDefault();
 }
