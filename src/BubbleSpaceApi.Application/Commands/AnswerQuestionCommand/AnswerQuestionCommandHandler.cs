@@ -15,8 +15,9 @@ public class AnswerQuestionCommandHandler : IRequestHandler<AnswerQuestionComman
 
     public async Task<Unit> Handle(AnswerQuestionCommand request, CancellationToken cancellationToken)
     {
-        var question = await _unitOfWork.QuestionRepository.GetEntityAsync(request.QuestionId);
-        
+        var question = (await _unitOfWork.QuestionRepository.GetEntitiesAsync(q => q.Id == request.QuestionId, "Answers"))
+            .SingleOrDefault();
+
         if (question is null)
             throw new EntityNotFoundException("Pergunta não encontrada.");
         else if (question.Answers.SingleOrDefault(x => x.ProfileId == request.ProfileId) is not null)

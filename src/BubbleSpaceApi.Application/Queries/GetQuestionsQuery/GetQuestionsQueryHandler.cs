@@ -15,6 +15,6 @@ public class GetQuestionsQueryHandler : IRequestHandler<GetQuestionsQuery, IColl
 
     public async Task<ICollection<QuestionViewModel>> Handle(GetQuestionsQuery request, CancellationToken cancellationToken)
     {
-        return (await _unitOfWork.QuestionRepository.GetEntitiesAsync()).Select(x => x.AsViewModel()).ToList();
+        return (await _unitOfWork.QuestionRepository.GetEntitiesAsync(null, "Profile,Answers")).Select(x => x.AsViewModel()).ToList();
     }
 }

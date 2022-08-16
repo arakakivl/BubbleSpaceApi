@@ -14,7 +14,9 @@ public class DeleteAnswerCommandHandler : IRequestHandler<DeleteAnswerCommand, U
 
     public async Task<Unit> Handle(DeleteAnswerCommand request, CancellationToken cancellationToken)
     {
-        var question = await _unitOfWork.QuestionRepository.GetEntityAsync(request.QuestionId);
+        var question = (await _unitOfWork.QuestionRepository.GetEntitiesAsync(q => q.Id == request.QuestionId, "Answers"))
+            .SingleOrDefault();
+        
         var answer = question?.Answers.SingleOrDefault(x => x.ProfileId == request.ProfileId);
 
         if (question is null)
