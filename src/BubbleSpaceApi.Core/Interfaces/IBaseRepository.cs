@@ -9,7 +9,7 @@ public interface IBaseRepository<TKey, TEntity> where TEntity : class, IBaseEnti
     Task<ICollection<TEntity>> GetEntitiesAsync();
     Task<TEntity?> GetEntityAsync(TKey key);
 
-    Task<ICollection<TEntity>> GetEntitiesAsync(Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, string includeProperties = "");
+    Task<ICollection<TEntity>> GetEntitiesAsync(Expression<Func<TEntity, bool>>? filter = null, string includeProperties = "");
 
     Task UpdateAsync(TEntity entity);
     Task DeleteAsync(TKey key);

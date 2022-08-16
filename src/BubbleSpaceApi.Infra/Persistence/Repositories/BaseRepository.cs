@@ -23,9 +23,10 @@ public class BaseRepository<TKey, TEntity> : IBaseRepository<TKey, TEntity> wher
     public virtual async Task<ICollection<TEntity>> GetEntitiesAsync()
     {
         return await Task.FromResult(_dbSet.ToList());
+        
     }
 
-    public virtual async Task<ICollection<TEntity>> GetEntitiesAsync(Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>>? orderBy = null, string includeProperties = "")
+    public virtual async Task<ICollection<TEntity>> GetEntitiesAsync(Expression<Func<TEntity, bool>>? filter = null, string includeProperties = "")
     {
         IQueryable<TEntity> query = _dbSet;
         if (filter is not null)
@@ -34,10 +35,7 @@ public class BaseRepository<TKey, TEntity> : IBaseRepository<TKey, TEntity> wher
         foreach(var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
             query = query.Include(includeProp);
         
-        if (orderBy is not null)
-            return await Task.FromResult(orderBy(query).ToList());
-        else
-            return await Task.FromResult(query.ToList());
+        return await Task.FromResult(query.ToList());
     }
 
     public virtual async Task<TEntity?> GetEntityAsync(TKey key)
