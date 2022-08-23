@@ -18,7 +18,7 @@ public class ProfileController : ControllerBase
     }
 
     [HttpGet("{username}")]
-    public async Task<IActionResult> GetByUsernameAsync([FromQuery] string? username)
+    public async Task<IActionResult> GetByUsernameAsync([FromRoute] string? username)
     {
         var cmd = new GetProfileQuery(username ??= "");
         
