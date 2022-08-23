@@ -42,7 +42,7 @@ public class QuestionsControllerTests
 
         // Act
         var result = await _sut.AskAsync(new AskQuestionInputModel() { Title = "Who is here?", Description = "" });
-        var okResult = result as CreatedAtRouteResult;
+        var okResult = result as CreatedAtActionResult;
 
         // Assert
         Assert.IsType<CreatedAtActionResult>(result);

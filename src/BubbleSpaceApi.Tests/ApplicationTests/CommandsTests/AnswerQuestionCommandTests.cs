@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using BubbleSpaceApi.Application.Commands.AnswerQuestionCommand;
 using BubbleSpaceApi.Application.Exceptions;
 using BubbleSpaceApi.Core.Entities;
@@ -33,7 +34,7 @@ public class AnswerQuestionCommandTests
 
         AnswerQuestionCommand cmd = new(qId, pId, "some answer");
 
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntityAsync(cmd.QuestionId)).ReturnsAsync(question);
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == cmd.QuestionId, "Answers")).ReturnsAsync(new List<Question>() { question });
 
         _unitOfWorkStub.Setup(x => x.AnswerRepository.AddAsync(It.IsAny<Answer>())).Verifiable();
         _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();
@@ -61,7 +62,7 @@ public class AnswerQuestionCommandTests
 
         AnswerQuestionCommand cmd = new(qId, pId, "some answer");
 
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntityAsync(cmd.QuestionId)).ReturnsAsync(question);
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == cmd.QuestionId, "Answers")).ReturnsAsync(new List<Question>() { question });
 
         _unitOfWorkStub.Setup(x => x.AnswerRepository.AddAsync(It.IsAny<Answer>())).Verifiable();
         _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();
@@ -80,7 +81,7 @@ public class AnswerQuestionCommandTests
         var qId = 10;
         AnswerQuestionCommand cmd = new(qId, Guid.NewGuid(), "some answer");
 
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntityAsync(cmd.QuestionId)).ReturnsAsync((Question?)null);
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == cmd.QuestionId, "Answers")).ReturnsAsync(new List<Question>() {  });
 
         _unitOfWorkStub.Setup(x => x.AnswerRepository.AddAsync(It.IsAny<Answer>())).Verifiable();
         _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();
