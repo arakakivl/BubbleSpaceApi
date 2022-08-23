@@ -53,7 +53,7 @@ builder.Services.AddTransient<IAuth, Auth>();
 // In order to use automatic validations, we can't use async rules for our validators!
 builder.Services.AddFluentValidationAutoValidation();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(opt => opt.SuppressAsyncSuffixInActionNames = false);
 
 /// Swagger ///
 

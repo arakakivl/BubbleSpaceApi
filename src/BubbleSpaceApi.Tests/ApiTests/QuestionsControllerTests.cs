@@ -45,7 +45,7 @@ public class QuestionsControllerTests
         var okResult = result as CreatedAtRouteResult;
 
         // Assert
-        Assert.IsType<CreatedAtRouteResult>(result);
+        Assert.IsType<CreatedAtActionResult>(result);
         
         Assert.NotNull(okResult?.Value);
         Assert.IsType<QuestionViewModel>(okResult?.Value);

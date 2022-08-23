@@ -30,19 +30,16 @@ public class QuestionsController : ControllerBase
     [HttpPost("ask")]
     public async Task<IActionResult> AskAsync([FromBody] AskQuestionInputModel model)
     {
-        try
-        {
-            var profId = _auth.GetProfileIdFromToken(HttpContext);
-            var cmd = new AskQuestionCommand(profId, model.Title, model.Description);
+        var profId = _auth.GetProfileIdFromToken(HttpContext);
+        var cmd = new AskQuestionCommand(profId, model.Title, model.Description);
 
-            var r = await _sender.Send(cmd);
+        var r = await _sender.Send(cmd);
+        var q = await _sender.Send(new GetQuestionQuery(r));
 
-            return CreatedAtRoute("GetQuestionRoute", r, await _sender.Send(new GetQuestionQuery(r)));
-        }
-        catch
-        {
-            return BadRequest();
-        }
+        if (q is null)
+            Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
+        return CreatedAtAction(nameof(GetAsync), new { Id = r }, q);
     }
 
     [HttpGet]
@@ -54,7 +51,7 @@ public class QuestionsController : ControllerBase
         return Ok(r);
     }
 
-    [HttpGet("{id}", Name = "GetQuestionRoute")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetAsync([FromRoute] long id)
     {
         try
