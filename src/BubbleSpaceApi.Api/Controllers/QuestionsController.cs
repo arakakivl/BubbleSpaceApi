@@ -12,7 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BubbleSpaceApi.Api.Controllers;
 
-[AllowAnonymous]
+[Authorize]
 [ApiController]
 [Route("/questions")]
 public class QuestionsController : ControllerBase
@@ -26,7 +26,6 @@ public class QuestionsController : ControllerBase
         _auth = auth;
     }
     
-    [Authorize]
     [HttpPost("ask")]
     public async Task<IActionResult> AskAsync([FromBody] AskQuestionInputModel model)
     {
@@ -42,6 +41,7 @@ public class QuestionsController : ControllerBase
         return CreatedAtAction(nameof(GetAsync), new { Id = r }, q);
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<IActionResult> GetAllAsync()
     {
@@ -51,6 +51,7 @@ public class QuestionsController : ControllerBase
         return Ok(r);
     }
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAsync([FromRoute] long id)
     {
@@ -83,7 +84,7 @@ public class QuestionsController : ControllerBase
         catch (Exception e)
         {
             if (e is SecurityTokenException || e is ForbiddenException)
-                return Forbid("Não autorizado.");
+                return Unauthorized("Não autorizado.");
             else if (e is EntityNotFoundException)
                 return NotFound(e.Message);
             else

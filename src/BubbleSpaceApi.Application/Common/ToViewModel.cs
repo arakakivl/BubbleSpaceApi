@@ -20,6 +20,7 @@ public static class ToViewModel
     {
         return new QuestionViewModel()
         {
+           UserWhoAsked = question.Profile.Username,
            Id = question.Id,
            Title = question.Title,
            Description = question.Description,
