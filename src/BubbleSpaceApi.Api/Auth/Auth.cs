@@ -18,18 +18,12 @@ public class Auth : IAuth
         var handler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_config.GetSection("Auth:Secret").Value);
 
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.ForegroundColor = ConsoleColor.Gray;
-
         var descriptor = new SecurityTokenDescriptor()
         {
-            Subject = new ClaimsIdentity(new Claim[]
-            {
-                new Claim("Id", profileId.ToString())
-            }),
-            Expires = DateTime.UtcNow.AddHours(double.Parse(_config.GetSection("Auth:AccessExpiration").Value)),
-            Audience = _config.GetSection("Auth:Audience").Value,
+            Subject = new ClaimsIdentity(new Claim[] { new Claim("Id", profileId.ToString()) }),
+            Audience = _config.GetSection("Auth:Audience").Value,            
             Issuer = _config.GetSection("Auth:Issuer").Value,
+            Expires = DateTime.UtcNow.AddHours(double.Parse(_config.GetSection("Auth:AccessExpiration").Value)),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
 
@@ -48,13 +42,12 @@ public class Auth : IAuth
 
         var tokenValidationParams = new TokenValidationParameters()
         {
-            ValidateAudience = true,
-            ValidateIssuer = true,
+            ValidAudience = _config.GetSection("Auth:ValidAudience").Value,
+            ValidIssuer = _config.GetSection("Auth:ValidAudience").Value,
+            ValidateAudience = int.Parse(_config.GetSection("Auth:ValidateAudience").Value) == 1,
+            ValidateIssuer = int.Parse(_config.GetSection("Auth:ValidateIssuer").Value) == 1,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("Auth:Secret").Value)),
-            ValidateLifetime = true,
-            ValidAudience = _config.GetSection("Auth:Audience").Value,
-            ValidIssuer = _config.GetSection("Auth:Issuer").Value
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.GetSection("Auth:Secret").Value))
         };
 
         var handler = new JwtSecurityTokenHandler();

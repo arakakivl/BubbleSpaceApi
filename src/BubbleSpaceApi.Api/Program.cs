@@ -38,13 +38,13 @@ builder.Services.AddAuthentication(x => {
     opt.SaveToken = true;
     opt.TokenValidationParameters = new()
     {
-        ValidateAudience = true,
-        ValidateIssuer = true,
+        ValidateAudience = int.Parse(builder.Configuration.GetSection("Auth:ValidateAudience").Value) == 1,
+        ValidateIssuer = int.Parse(builder.Configuration.GetSection("Auth:ValidateIssuer").Value) == 1,
+        ValidAudience = builder.Configuration.GetSection("Auth:ValidAudience").Value,
+        ValidIssuer = builder.Configuration.GetSection("Auth:ValidIssuer").Value,
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("Auth:Secret").Value)),
-        ValidateLifetime = true,
-        ValidAudience = builder.Configuration.GetSection("Auth:Audience").Value,
-        ValidIssuer = builder.Configuration.GetSection("Auth:Issuer").Value
+        ValidateLifetime = true
     };
 });
 
@@ -70,6 +70,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

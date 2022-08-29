@@ -35,9 +35,6 @@ public class QuestionsController : ControllerBase
         var r = await _sender.Send(cmd);
         var q = await _sender.Send(new GetQuestionQuery(r));
 
-        if (q is null)
-            Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-
         return CreatedAtAction(nameof(GetAsync), new { Id = r }, q);
     }
 
@@ -67,8 +64,7 @@ public class QuestionsController : ControllerBase
             return NotFound(e.Message);
         }
     }
-
-    [Authorize]
+    
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAsync([FromRoute] long id)
     {
