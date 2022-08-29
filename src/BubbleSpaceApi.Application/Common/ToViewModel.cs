@@ -12,7 +12,8 @@ public static class ToViewModel
             Username = profile.Username,
             Bio = profile.Bio,
             Questions = profile.Questions.Select(x => x.AsProfileQuestionViewModel()).ToList(),
-            Answers = profile.Answers.Select(x => x.AsProfileAnswerViewModel()).ToList()
+            Answers = profile.Answers.Select(x => x.AsProfileAnswerViewModel()).ToList(),
+            CreatedAt = profile.CreatedAt
         };
     }
 
@@ -24,7 +25,8 @@ public static class ToViewModel
            Id = question.Id,
            Title = question.Title,
            Description = question.Description,
-           Answers =  question.Answers.Select(x => x.AsViewModel()).ToList()
+           Answers =  question.Answers.Select(x => x.AsViewModel()).ToList(),
+           CreatedAt = question.CreatedAt
         };
     }
 
@@ -34,7 +36,8 @@ public static class ToViewModel
         {
             Id = question.Id,
             Title = question.Title,
-            Description = question.Description
+            Description = question.Description,
+            CreatedAt = question.CreatedAt
         };
     }
 
@@ -44,7 +47,8 @@ public static class ToViewModel
         {
             QuestionId = answer.QuestionId,
             QuestionTitle = answer.Question.Title,
-            Answer = answer.Text
+            Answer = answer.Text,
+            CreatedAt = answer.CreatedAt
         };
     }
 
@@ -53,7 +57,8 @@ public static class ToViewModel
         return new AnswerViewModel()
         {
             UserWhoAnswered = answer.Profile.Username,
-            Text = answer.Text
+            Text = answer.Text,
+            CreatedAt = answer.CreatedAt
         };
     }
 }

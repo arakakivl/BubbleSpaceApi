@@ -6,4 +6,6 @@ public class ProfileAnswerViewModel
     public string QuestionTitle { get; set; } = null!;
     
     public string Answer { get; set; } = null!;
+
+    public DateTimeOffset CreatedAt { get; set; }
 }
