@@ -11,8 +11,8 @@ public static class ToViewModel
         {
             Username = profile.Username,
             Bio = profile.Bio,
-            Questions = profile.Questions.Select(x => x.AsViewModel()).ToList(),
-            Answers = profile.Answers.Select(x => x.AsViewModel()).ToList()
+            Questions = profile.Questions.Select(x => x.AsProfileQuestionViewModel()).ToList(),
+            Answers = profile.Answers.Select(x => x.AsProfileAnswerViewModel()).ToList()
         };
     }
 
@@ -25,6 +25,26 @@ public static class ToViewModel
            Title = question.Title,
            Description = question.Description,
            Answers =  question.Answers.Select(x => x.AsViewModel()).ToList()
+        };
+    }
+
+    public static ProfileQuestionViewModel AsProfileQuestionViewModel(this Question question)
+    {
+        return new ProfileQuestionViewModel()
+        {
+            Id = question.Id,
+            Title = question.Title,
+            Description = question.Description
+        };
+    }
+
+    public static ProfileAnswerViewModel AsProfileAnswerViewModel(this Answer answer)
+    {
+        return new ProfileAnswerViewModel()
+        {
+            QuestionId = answer.QuestionId,
+            QuestionTitle = answer.Question.Title,
+            Answer = answer.Text
         };
     }
 
