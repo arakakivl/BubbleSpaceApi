@@ -10,4 +10,5 @@ public class Account : IBaseEntity<Guid>
     public string PasswordHash { get; set; } = null!;
 
     public Profile Profile { get; set; } = null!;
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 }

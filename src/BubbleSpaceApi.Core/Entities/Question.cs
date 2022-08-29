@@ -13,4 +13,6 @@ public class Question : IBaseEntity<long>
 
     public Guid ProfileId { get; set; }
     public Profile Profile { get; set; } = null!;
+
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 }

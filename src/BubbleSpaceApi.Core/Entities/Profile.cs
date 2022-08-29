@@ -14,4 +14,6 @@ public class Profile : IBaseEntity<Guid>
 
     public Guid AccountId { get; set; }
     public Account Account { get; set; } = null!;
+
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 }
