@@ -1,4 +1,4 @@
-using BubbleSpaceApi.Application.Exceptions;
+using BubbleSpaceApi.Core.Exceptions;
 using BubbleSpaceApi.Application.Models.ViewModels;
 using BubbleSpaceApi.Application.Queries.GetQuestionQuery;
 using BubbleSpaceApi.Core.Entities;

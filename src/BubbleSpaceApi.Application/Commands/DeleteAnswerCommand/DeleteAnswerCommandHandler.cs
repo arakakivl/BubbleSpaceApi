@@ -1,4 +1,4 @@
-using BubbleSpaceApi.Application.Exceptions;
+using BubbleSpaceApi.Core.Exceptions;
 using BubbleSpaceApi.Core.Interfaces;
 using MediatR;
 

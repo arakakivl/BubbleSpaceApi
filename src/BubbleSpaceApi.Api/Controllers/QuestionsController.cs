@@ -1,7 +1,7 @@
 using BubbleSpaceApi.Api.Auth;
 using BubbleSpaceApi.Application.Commands.AskQuestionCommand;
 using BubbleSpaceApi.Application.Commands.DeleteQuestionCommand;
-using BubbleSpaceApi.Application.Exceptions;
+using BubbleSpaceApi.Core.Exceptions;
 using BubbleSpaceApi.Application.Models.InputModels.AskQuestionModel;
 using BubbleSpaceApi.Application.Queries.GetQuestionQuery;
 using BubbleSpaceApi.Application.Queries.GetQuestionsQuery;

@@ -1,5 +1,5 @@
 using BubbleSpaceApi.Application.Commands.DeleteQuestionCommand;
-using BubbleSpaceApi.Application.Exceptions;
+using BubbleSpaceApi.Core.Exceptions;
 using BubbleSpaceApi.Core.Entities;
 using BubbleSpaceApi.Core.Interfaces;
 using Moq;

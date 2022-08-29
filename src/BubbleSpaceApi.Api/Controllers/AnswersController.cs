@@ -1,7 +1,7 @@
 using BubbleSpaceApi.Api.Auth;
 using BubbleSpaceApi.Application.Commands.AnswerQuestionCommand;
 using BubbleSpaceApi.Application.Commands.DeleteAnswerCommand;
-using BubbleSpaceApi.Application.Exceptions;
+using BubbleSpaceApi.Core.Exceptions;
 using BubbleSpaceApi.Application.Models.InputModels.AnswerQuestionModel;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

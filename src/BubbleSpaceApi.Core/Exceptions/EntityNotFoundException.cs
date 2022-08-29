@@ -1,4 +1,4 @@
-namespace BubbleSpaceApi.Application.Exceptions;
+namespace BubbleSpaceApi.Core.Exceptions;
 
 public class EntityNotFoundException : Exception
 {

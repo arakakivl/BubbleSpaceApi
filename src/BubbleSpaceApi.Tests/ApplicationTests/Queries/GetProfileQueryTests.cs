@@ -3,7 +3,7 @@ using Xunit;
 using BubbleSpaceApi.Application.Queries.GetProfileQuery;
 using BubbleSpaceApi.Core.Interfaces;
 using BubbleSpaceApi.Application.Models.ViewModels;
-using BubbleSpaceApi.Application.Exceptions;
+using BubbleSpaceApi.Core.Exceptions;
 using BubbleSpaceApi.Core.Entities;
 
 namespace BubbleSpaceApi.Tests.ApplicationTests.QueriesTests;

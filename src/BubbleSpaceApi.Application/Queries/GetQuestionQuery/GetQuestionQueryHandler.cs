@@ -1,7 +1,7 @@
-using BubbleSpaceApi.Application.Exceptions;
+using BubbleSpaceApi.Core.Exceptions;
 using BubbleSpaceApi.Application.Models.ViewModels;
 using BubbleSpaceApi.Core.Interfaces;
-using BubbleSpaceAPi.Application.Common;
+using BubbleSpaceApi.Application.Common;
 using MediatR;
 
 namespace BubbleSpaceApi.Application.Queries.GetQuestionQuery;

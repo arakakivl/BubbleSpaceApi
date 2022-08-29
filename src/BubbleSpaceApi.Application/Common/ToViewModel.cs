@@ -1,7 +1,7 @@
 using BubbleSpaceApi.Application.Models.ViewModels;
 using BubbleSpaceApi.Core.Entities;
 
-namespace BubbleSpaceAPi.Application.Common;
+namespace BubbleSpaceApi.Application.Common;
 
 public static class ToViewModel
 {

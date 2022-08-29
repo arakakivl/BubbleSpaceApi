@@ -1,5 +1,5 @@
 using BubbleSpaceApi.Api.Controllers;
-using BubbleSpaceApi.Application.Exceptions;
+using BubbleSpaceApi.Core.Exceptions;
 using BubbleSpaceApi.Application.Models.ViewModels;
 using BubbleSpaceApi.Application.Queries.GetProfileQuery;
 using MediatR;
