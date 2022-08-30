@@ -26,7 +26,10 @@ public class GetQuestionQueryTests
         long id = 10;
         var query = new GetQuestionQuery(id);
 
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == query.Id, "Profile,Answers")).ReturnsAsync(new List<Question>() { new Question() { Id = id  } });
+        Profile p = new Profile();
+        List<Answer> answers = new(); 
+
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == query.Id, "Profile,Answers")).ReturnsAsync(new List<Question>() { new Question() { Id = id, Profile = p, Answers = answers  } });
 
         // Act
         var result = await _sut.Handle(query, default);

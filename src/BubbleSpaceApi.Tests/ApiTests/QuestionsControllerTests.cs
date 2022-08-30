@@ -140,6 +140,6 @@ public class QuestionsControllerTests
         var result = await _sut.DeleteAsync(id);
 
         // Assert
-        Assert.IsType<ForbidResult>(result);
+        Assert.IsType<UnauthorizedObjectResult>(result);
     }
 }
