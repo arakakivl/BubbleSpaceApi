@@ -17,7 +17,7 @@ public class DeleteQuestionCommandHandler : IRequestHandler<DeleteQuestionComman
         var question = await _unitOfWork.QuestionRepository.GetEntityAsync(request.Id);
         if (question is null)
             throw new EntityNotFoundException("Pergunta não encontrada.");
-        else if (question.ProfileId != request.ProfileId)
+        else if (!question.UserOwnsQuestion(request.ProfileId))
             throw new ForbiddenException("Ação não autorizada.");
 
         await _unitOfWork.QuestionRepository.DeleteAsync(request.Id);

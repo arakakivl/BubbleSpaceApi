@@ -20,7 +20,7 @@ public class AnswerQuestionCommandHandler : IRequestHandler<AnswerQuestionComman
 
         if (question is null)
             throw new EntityNotFoundException("Pergunta não encontrada.");
-        else if (question.Answers.SingleOrDefault(x => x.ProfileId == request.ProfileId) is not null)
+        else if (question.UserAnswered(request.ProfileId))
             throw new AlreadyAnsweredQuestionException("Pergunta já respondida.");
         
         var answer = new Answer()

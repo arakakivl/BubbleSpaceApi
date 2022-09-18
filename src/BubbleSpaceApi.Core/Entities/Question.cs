@@ -15,4 +15,10 @@ public class Question : IBaseEntity<long>
     public Profile Profile { get; set; } = null!;
 
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+
+    public bool UserAnswered(Guid profId) =>
+        Answers.Any(x => x.ProfileId == profId);
+
+    public bool UserOwnsQuestion(Guid profId) =>
+        ProfileId == profId;
 }

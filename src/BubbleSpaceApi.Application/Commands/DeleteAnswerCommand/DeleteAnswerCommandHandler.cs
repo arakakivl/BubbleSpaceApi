@@ -21,10 +21,12 @@ public class DeleteAnswerCommandHandler : IRequestHandler<DeleteAnswerCommand, U
 
         if (question is null)
             throw new EntityNotFoundException("Pergunta não encontrada.");
-        else if (answer is null)
+        else if (!question.UserAnswered(request.ProfileId))
             throw new EntityNotFoundException("Resposta não encontrada.");
 
-        await _unitOfWork.AnswerRepository.DeleteAsync(answer.Id);
+        // answer.Id never will be null if user answered the question
+        await _unitOfWork.AnswerRepository.DeleteAsync(answer!.Id);
+        
         await _unitOfWork.SaveChangesAsync();
 
         return Unit.Value;
