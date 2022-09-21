@@ -3,7 +3,7 @@ using Xunit;
 
 namespace BubbleSpaceApi.CoreTests.Entities;
 
-public class Question
+public class QuestionTests
 {
     [Fact]
     public void UserAnswered_ShouldReturnTrue_WhenUserAnsweredQuestion()
