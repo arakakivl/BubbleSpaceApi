@@ -1,5 +1,6 @@
 using System.Text;
 using BubbleSpaceApi.Api.Auth;
+using BubbleSpaceApi.Application;
 using BubbleSpaceApi.Application.Commands.RegisterUserCommand;
 using BubbleSpaceApi.Application.Models.InputModels.RegisterUserModel;
 using BubbleSpaceApi.Core.Interfaces;
@@ -19,9 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 /// Data Access ///
 builder.Services.AddInfrastructureServices();
 
-/// MediatR and CQRS Pattern ///
-builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserValidator>();
-builder.Services.AddMediatR(typeof(RegisterUserCommand));
+/// MediatR framework, CQRS Pattern and validators ///
+builder.Services.AddApplicationServices();
 
 /// API ///
 builder.Services.AddAuthentication(x => {
@@ -43,10 +43,6 @@ builder.Services.AddAuthentication(x => {
 });
 
 builder.Services.AddTransient<IAuth, Auth>();
-
-// In order to use automatic validations, we can't use async rules for our validators!
-builder.Services.AddFluentValidationAutoValidation();
-
 builder.Services.AddControllers(opt => opt.SuppressAsyncSuffixInActionNames = false);
 
 /// Swagger ///
