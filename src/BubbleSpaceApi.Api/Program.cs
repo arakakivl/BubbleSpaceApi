@@ -4,6 +4,7 @@ using BubbleSpaceApi.Application.Commands.RegisterUserCommand;
 using BubbleSpaceApi.Application.Models.InputModels.RegisterUserModel;
 using BubbleSpaceApi.Core.Interfaces;
 using BubbleSpaceApi.Core.Interfaces.Repositories;
+using BubbleSpaceApi.Infra;
 using BubbleSpaceApi.Infra.Persistence;
 using BubbleSpaceApi.Infra.Persistence.Repositories;
 using FluentValidation;
@@ -16,14 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 var builder = WebApplication.CreateBuilder(args);
 
 /// Data Access ///
-builder.Services.AddDbContext<AppDbContext>(x => x.UseInMemoryDatabase("db"));
-
-builder.Services.AddTransient<IAccountRepository, AccountRepository>();
-builder.Services.AddTransient<IProfileRepository, ProfileRepository>();
-builder.Services.AddTransient<IQuestionRepository, QuestionRepository>();
-builder.Services.AddTransient<IAnswerRepository, AnswerRepository>();
-
-builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddInfrastructureServices();
 
 /// MediatR and CQRS Pattern ///
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserValidator>();
