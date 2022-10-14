@@ -1,8 +1,9 @@
 using System.Linq.Expressions;
+using BubbleSpaceApi.Core.Entities;
 
 namespace BubbleSpaceApi.Core.Interfaces;
 
-public interface IBaseRepository<TKey, TEntity> where TEntity : class, IBaseEntity<TKey>
+public interface IBaseRepository<TKey, TEntity> where TEntity : BaseEntity<TKey>
 {
     Task<TKey> AddAsync(TEntity entity);
 
