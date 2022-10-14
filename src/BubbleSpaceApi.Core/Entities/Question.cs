@@ -2,10 +2,8 @@ using BubbleSpaceApi.Core.Interfaces;
 
 namespace BubbleSpaceApi.Core.Entities;
 
-public class Question : IBaseEntity<long>
+public class Question : BaseEntity<long>
 {
-    public long Id { get; set; }
-
     public string Title { get; set; } = null!;
     public string Description { get; set; } = "";
 
@@ -14,7 +12,10 @@ public class Question : IBaseEntity<long>
     public Guid ProfileId { get; set; }
     public Profile Profile { get; set; } = null!;
 
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public Question() : base(0)
+    {
+        
+    }
 
     public bool UserAnswered(Guid profId) =>
         Answers.Any(x => x.ProfileId == profId);

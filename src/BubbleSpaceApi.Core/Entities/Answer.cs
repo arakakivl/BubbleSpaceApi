@@ -2,10 +2,8 @@ using BubbleSpaceApi.Core.Interfaces;
 
 namespace BubbleSpaceApi.Core.Entities;
 
-public class Answer : IBaseEntity<Guid>
+public class Answer : BaseEntity<Guid>
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
-
     public string Text { get; set; } = null!;
 
     public long QuestionId { get; set; }
@@ -14,5 +12,8 @@ public class Answer : IBaseEntity<Guid>
     public Guid ProfileId { get; set; }
     public Profile Profile { get; set; } = null!;
 
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public Answer() : base(Guid.NewGuid())
+    {
+        
+    }
 }
