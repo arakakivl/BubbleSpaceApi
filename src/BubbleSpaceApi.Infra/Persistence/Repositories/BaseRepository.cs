@@ -1,10 +1,11 @@
 using System.Linq.Expressions;
+using BubbleSpaceApi.Core.Entities;
 using BubbleSpaceApi.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BubbleSpaceApi.Infra.Persistence.Repositories;
 
-public class BaseRepository<TKey, TEntity> : IBaseRepository<TKey, TEntity> where TEntity : class, IBaseEntity<TKey>
+public class BaseRepository<TKey, TEntity> : IBaseRepository<TKey, TEntity> where TEntity : BaseEntity<TKey>
 {
     private readonly DbSet<TEntity> _dbSet;
     public DbSet<TEntity> DbSet => _dbSet;
