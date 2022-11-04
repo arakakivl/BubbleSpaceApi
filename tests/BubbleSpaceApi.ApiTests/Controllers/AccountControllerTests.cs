@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using BubbleSpaceApi.Api.Auth;
 using BubbleSpaceApi.Api.Controllers;
 using BubbleSpaceApi.Application.Commands.LoginUserCommand;
@@ -6,6 +8,8 @@ using BubbleSpaceApi.Application.Models.InputModels.RegisterUserModel;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Primitives;
 using Moq;
 using Xunit;
 
@@ -30,6 +34,8 @@ public class AccountControllerTests
                 HttpContext = new DefaultHttpContext()
             }
         };
+
+        _sut.ControllerContext.HttpContext.Request.Headers.Authorization = "Bearer someSortOfJWTToken";
     }
 
     [Fact]
@@ -61,11 +67,12 @@ public class AccountControllerTests
         };
 
         var profId = Guid.NewGuid();
+        var claims = new Dictionary<string, string>() { { "ProfileId", profId.ToString() } };
 
         _senderStub.Setup(x => x.Send(It.IsAny<LoginUserCommand>(), default)).ReturnsAsync(profId);
 
-        _authStub.Setup(x => x.GenerateJwtToken(profId)).Returns(Guid.NewGuid().ToString());
-        _authStub.Setup(x => x.GenerateRefreshToken()).Returns(Guid.NewGuid().ToString());
+        _authStub.Setup(x => x.GenerateToken(claims, false)).Returns(Guid.NewGuid().ToString());
+        _authStub.Setup(x => x.GenerateToken(claims, true)).Returns(Guid.NewGuid().ToString());
 
         // Act
         var result = await _sut.SignInAsync(model);

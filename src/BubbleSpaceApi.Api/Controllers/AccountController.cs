@@ -9,16 +9,12 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BubbleSpaceApi.Api.Controllers;
 
-[Route("/auth")]
-[ApiController]
 [AllowAnonymous]
-public class AccountController : ControllerBase
+public class AccountController : ApiControllerBase
 {
-    private readonly ISender _sender;
     private readonly IAuth _auth;
-    public AccountController(ISender sender, IAuth auth)
+    public AccountController(ISender sender, IAuth auth) : base(sender)
     {
-        _sender = sender;
         _auth = auth;
     }
     
@@ -29,7 +25,7 @@ public class AccountController : ControllerBase
             return BadRequest("Você já está autenticado.");
 
         var cmd = new RegisterUserCommand(model.Username, model.Email, model.Password);
-        await _sender.Send(cmd);
+        await Sender.Send(cmd);
 
         return Ok();
     }
@@ -42,18 +38,19 @@ public class AccountController : ControllerBase
             return BadRequest("Você já está autenticado.");
 
         var cmd = new LoginUserCommand(model.UsernameOrEmail, model.Password);
-        var profileId = await _sender.Send(cmd);
+        var profileId = await Sender.Send(cmd);
 
         if (profileId.Equals(Guid.Empty))
             return BadRequest("Usuário, email ou senha inválidos.");
         
-        // Cookies config
-        HttpContext.Response.Cookies.Append("bsacc", _auth.GenerateJwtToken(profileId), new CookieOptions() 
+        // Tokens, claims and cookies config
+        Dictionary<string, string> claims = new()
         {
-            HttpOnly = false
-        });
+            { "ProfileId", profileId.ToString() }
+        };
 
-        HttpContext.Response.Cookies.Append("bsrfh", _auth.GenerateRefreshToken(), new CookieOptions() 
+        HttpContext.Response.Cookies.Append("bsacc", _auth.GenerateToken(claims));
+        HttpContext.Response.Cookies.Append("bsrfh", _auth.GenerateToken(claims, true), new CookieOptions() 
         {
             HttpOnly = true
         });

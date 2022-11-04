@@ -13,27 +13,22 @@ using Microsoft.IdentityModel.Tokens;
 namespace BubbleSpaceApi.Api.Controllers;
 
 [Authorize]
-[ApiController]
-[Route("/questions")]
-public class QuestionsController : ControllerBase
+public class QuestionsController : ApiControllerBase
 {
-    private readonly ISender _sender;
     private readonly IAuth _auth;
-
-    public QuestionsController(ISender sender, IAuth auth)
+    public QuestionsController(ISender sender, IAuth auth) : base(sender)
     {
-        _sender = sender;
         _auth = auth;
     }
     
     [HttpPost("ask")]
     public async Task<IActionResult> AskAsync([FromBody] AskQuestionInputModel model)
     {
-        var profId = _auth.GetProfileIdFromToken(HttpContext);
+        var profId = _auth.GetProfileIdFromToken(GetAuthorizationBearerToken());
         var cmd = new AskQuestionCommand(profId, model.Title, model.Description);
 
-        var r = await _sender.Send(cmd);
-        var q = await _sender.Send(new GetQuestionQuery(r));
+        var r = await Sender.Send(cmd);
+        var q = await Sender.Send(new GetQuestionQuery(r));
 
         return CreatedAtAction(nameof(GetAsync), new { Id = r }, q);
     }
@@ -43,7 +38,7 @@ public class QuestionsController : ControllerBase
     public async Task<IActionResult> GetAllAsync()
     {
         var cmd = new GetQuestionsQuery();
-        var r = await _sender.Send(cmd);
+        var r = await Sender.Send(cmd);
 
         return Ok(r);
     }
@@ -55,7 +50,7 @@ public class QuestionsController : ControllerBase
         try
         {
             var cmd = new GetQuestionQuery(id);
-            var r = await _sender.Send(cmd);
+            var r = await Sender.Send(cmd);
 
             return Ok(r);
         }
@@ -70,10 +65,10 @@ public class QuestionsController : ControllerBase
     {
         try
         {
-            var profId = _auth.GetProfileIdFromToken(HttpContext);
+            var profId = _auth.GetProfileIdFromToken(GetAuthorizationBearerToken());
             var cmd = new DeleteQuestionCommand(id, profId);
 
-            await _sender.Send(cmd);
+            await Sender.Send(cmd);
 
             return NoContent();
         }

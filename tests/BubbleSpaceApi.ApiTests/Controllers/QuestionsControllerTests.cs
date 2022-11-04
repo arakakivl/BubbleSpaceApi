@@ -11,6 +11,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
+using Microsoft.AspNetCore.Http;
 
 namespace BubbleSpaceApi.ApiTests;
 
@@ -26,7 +27,15 @@ public class QuestionsControllerTests
         _senderStub = new();
         _authStub = new();
 
-        _sut = new(_senderStub.Object, _authStub.Object);
+        _sut = new(_senderStub.Object, _authStub.Object)
+        {
+            ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext()
+            }
+        };
+
+        _sut.ControllerContext.HttpContext.Request.Headers.Authorization = "Bearer someSortOfJWTToken";
     }
 
     [Fact]
@@ -35,7 +44,7 @@ public class QuestionsControllerTests
         // Arrange
         long id = 4;
 
-        _authStub.Setup(x => x.GetProfileIdFromToken(_sut.HttpContext)).Returns(Guid.NewGuid());
+        _authStub.Setup(x => x.GetProfileIdFromToken(It.IsAny<string>())).Returns(Guid.NewGuid());
         _senderStub.Setup(x => x.Send(It.IsAny<AskQuestionCommand>(), default)).ReturnsAsync(id);
 
         _senderStub.Setup(x => x.Send(It.IsAny<GetQuestionQuery>(), default)).ReturnsAsync(new QuestionViewModel());
@@ -102,7 +111,7 @@ public class QuestionsControllerTests
     {
         // Arrange
         var id = 20;
-        _authStub.Setup(x => x.GetProfileIdFromToken(_sut.HttpContext)).Returns(Guid.NewGuid());
+        _authStub.Setup(x => x.GetProfileIdFromToken(It.IsAny<string>())).Returns(Guid.NewGuid());
 
         // Act
         var result = await _sut.DeleteAsync(id);
@@ -117,7 +126,7 @@ public class QuestionsControllerTests
         // Arrange
         var id = 20;
 
-        _authStub.Setup(x => x.GetProfileIdFromToken(_sut.HttpContext)).Returns(Guid.NewGuid());
+        _authStub.Setup(x => x.GetProfileIdFromToken(It.IsAny<string>())).Returns(Guid.NewGuid());
         _senderStub.Setup(x => x.Send(It.IsAny<DeleteQuestionCommand>(), default)).ThrowsAsync(new EntityNotFoundException("Not found question."));
 
         // Act
@@ -133,7 +142,7 @@ public class QuestionsControllerTests
         // Arrange
         var id = 20;
 
-        _authStub.Setup(x => x.GetProfileIdFromToken(_sut.HttpContext)).Returns(Guid.NewGuid());
+        _authStub.Setup(x => x.GetProfileIdFromToken(It.IsAny<string>())).Returns(Guid.NewGuid());
         _senderStub.Setup(x => x.Send(It.IsAny<DeleteQuestionCommand>(), default)).ThrowsAsync(new ForbiddenException("User does not own the question."));
 
         // Act

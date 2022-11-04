@@ -2,8 +2,6 @@ namespace BubbleSpaceApi.Api.Auth;
 
 public interface IAuth
 {
-    public string GenerateJwtToken(Guid profileId);
-    public string GenerateRefreshToken();
-
-    public Guid GetProfileIdFromToken(HttpContext context);
+    public Guid GetProfileIdFromToken(string token);
+    public string GenerateToken(Dictionary<string, string> claims, bool isRefresh = false);
 }

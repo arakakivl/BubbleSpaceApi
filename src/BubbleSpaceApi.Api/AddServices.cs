@@ -20,19 +20,23 @@ public static class AddServices
             opt.SaveToken = true;
             opt.TokenValidationParameters = new()
             {
-                ValidateAudience = int.Parse(builder.Configuration.GetSection("Auth:ValidateAudience").Value) == 1,
-                ValidateIssuer = int.Parse(builder.Configuration.GetSection("Auth:ValidateIssuer").Value) == 1,
-                ValidAudience = builder.Configuration.GetSection("Auth:ValidAudience").Value,
-                ValidIssuer = builder.Configuration.GetSection("Auth:ValidIssuer").Value,
+                ValidateAudience = Convert.ToBoolean(builder.Configuration.GetSection("AuthSettings:ValidateAudience").Value),
+                ValidateIssuer = Convert.ToBoolean(builder.Configuration.GetSection("AuthSettings:ValidateIssuer").Value),
+                ValidAudience = builder.Configuration.GetSection("AuthSettings:Audience").Value,
+                ValidIssuer = builder.Configuration.GetSection("AuthSettings:Issuer").Value,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("Auth:Secret").Value)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("AuthSettings:Secret").Value)),
                 ValidateLifetime = true
             };
         });
 
-        collection.AddTransient<IAuth, Auth.Auth>();
+        collection.AddTransient<IAuth, Auth.Auth>(provider => 
+        {
+            var settings = builder.Configuration.GetSection(nameof(AuthSettings)).Get<AuthSettings>();
+            return new Auth.Auth(settings);
+        });
+        
         collection.AddControllers(opt => opt.SuppressAsyncSuffixInActionNames = false);
-
         return collection;
     }
 }

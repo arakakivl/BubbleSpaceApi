@@ -6,15 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BubbleSpaceApi.Api.Controllers;
 
-[AllowAnonymous]
-[ApiController]
-[Route("/profile")]
-public class ProfileController : ControllerBase
+public class ProfileController : ApiControllerBase
 {
-    private readonly ISender _sender;
-    public ProfileController(ISender sender)
+    public ProfileController(ISender sender) : base(sender)
     {
-        _sender = sender;
+
     }
 
     [HttpGet("{username}")]
@@ -24,7 +20,7 @@ public class ProfileController : ControllerBase
         
         try
         {
-            var profile = await _sender.Send(cmd);
+            var profile = await Sender.Send(cmd);
             return Ok(profile);
         }
         catch (EntityNotFoundException e)

@@ -10,16 +10,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace BubbleSpaceApi.Api.Controllers;
 
 [Authorize]
-[ApiController]
-[Route("/answers")]
-public class AnswersController : ControllerBase
+public class AnswersController : ApiControllerBase
 {
-    private readonly ISender _sender;
     private readonly IAuth _auth;
    
-    public AnswersController(ISender sender, IAuth auth)
+    public AnswersController(ISender sender, IAuth auth) : base(sender)
     {
-        _sender = sender;
         _auth = auth;
     }
 
@@ -28,10 +24,10 @@ public class AnswersController : ControllerBase
     {
         try
         {
-            var profileId = _auth.GetProfileIdFromToken(HttpContext);
+            var profileId = _auth.GetProfileIdFromToken(GetAuthorizationBearerToken());
             var cmd = new AnswerQuestionCommand(questionId, profileId, model.Text);
 
-            await _sender.Send(cmd);
+            await Sender.Send(cmd);
 
             return Ok();
         }
@@ -51,10 +47,10 @@ public class AnswersController : ControllerBase
     {
         try
         {
-            var profileId = _auth.GetProfileIdFromToken(HttpContext);
+            var profileId = _auth.GetProfileIdFromToken(GetAuthorizationBearerToken());
             var cmd = new DeleteAnswerCommand(questionId, profileId);
 
-            await _sender.Send(cmd);
+            await Sender.Send(cmd);
 
             return NoContent();
         }

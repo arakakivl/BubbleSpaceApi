@@ -7,60 +7,57 @@ namespace BubbleSpaceApi.Api.Auth;
 
 public class Auth : IAuth
 {
-    private readonly IConfiguration _config;
-    public Auth(IConfiguration config)
+    private readonly AuthSettings _settings;
+    public Auth(AuthSettings settings)
     {
-        _config = config;
+        _settings = settings;
     }
 
-    public string GenerateJwtToken(Guid profileId)
+    public string GenerateToken(Dictionary<string, string> dictionaryClaims, bool isRefresh = false)
     {
+        var claims = new List<Claim>();
+        foreach(KeyValuePair<string, string> s in dictionaryClaims)
+            claims.Add(new Claim(s.Key, s.Value));
+
         var handler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_config.GetSection("Auth:Secret").Value);
+        var key = Encoding.ASCII.GetBytes(_settings.Secret);
 
         var descriptor = new SecurityTokenDescriptor()
         {
-            Subject = new ClaimsIdentity(new Claim[] { new Claim("Id", profileId.ToString()) }),
-            Audience = _config.GetSection("Auth:Audience").Value,            
-            Issuer = _config.GetSection("Auth:Issuer").Value,
-            Expires = DateTime.UtcNow.AddHours(double.Parse(_config.GetSection("Auth:AccessExpiration").Value)),
+            Subject = new ClaimsIdentity(claims),
+            Audience = _settings.ValidateAudience ? _settings.Audience : "",
+            Issuer = _settings.ValidateIssuer ? _settings.Issuer : "",
+            Expires = DateTime.UtcNow.AddHours(isRefresh ? _settings.RefreshExpiration : _settings.AccessExpiration),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
 
         var token = handler.CreateToken(descriptor);
         return handler.WriteToken(token);
     }
-
-    public string GenerateRefreshToken()
+    public Guid GetProfileIdFromToken(string token)
     {
-        return Guid.NewGuid().ToString();
+        var claims = GetClaims(token);
+        return Guid.Parse(claims.FirstOrDefault(x => x.Type == "ProfileId")!.Value);
     }
 
-    public Guid GetProfileIdFromToken(HttpContext context)
+    private IEnumerable<Claim> GetClaims(string token)
     {
-        var cookie = context.Request.Cookies.SingleOrDefault(x => x.Key == "bsacc");
-
-        var tokenValidationParams = new TokenValidationParameters()
+        var validationParams = new TokenValidationParameters()
         {
-            ValidAudience = _config.GetSection("Auth:ValidAudience").Value,
-            ValidIssuer = _config.GetSection("Auth:ValidAudience").Value,
-            ValidateAudience = int.Parse(_config.GetSection("Auth:ValidateAudience").Value) == 1,
-            ValidateIssuer = int.Parse(_config.GetSection("Auth:ValidateIssuer").Value) == 1,
+            ValidateAudience = _settings.ValidateAudience,
+            ValidateIssuer = _settings.ValidateIssuer,
+            ValidAudience = _settings.ValidateAudience ? _settings.Audience : "",
+            ValidIssuer = _settings.ValidateIssuer ? _settings.Issuer : "",
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_config.GetSection("Auth:Secret").Value))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_settings.Secret))
         };
 
         var handler = new JwtSecurityTokenHandler();
-        var principal = handler.ValidateToken(cookie.Value, tokenValidationParams, out var valid);
+        var principal = handler.ValidateToken(token, validationParams, out var valid);
 
-        if (valid is not JwtSecurityToken jwtSecurityToken || principal is null )
-            throw new SecurityTokenException("Invalid jwt token.");
-        else if (!jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-            throw new Exception(SecurityAlgorithms.HmacSha256Signature);
-
-        if (Guid.TryParse(principal.Claims.SingleOrDefault(x => x.Type == "Id")?.Value, out var profId))
-            return profId;
-        else
-            throw new Exception("Invalid access token.");
+        if (valid is not JwtSecurityToken jwtSecurityToken || principal is null)
+            throw new SecurityTokenException("Invalid JWT token.");
+        
+        return principal.Claims;
     }
 }

@@ -10,6 +10,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
+using Microsoft.AspNetCore.Http;
 
 namespace BubbleSpaceApi.ApiTests;
 
@@ -25,7 +26,15 @@ public class AnswersControllerTests
         _senderStub = new();
         _authStub = new();
 
-        _sut = new(_senderStub.Object, _authStub.Object);
+        _sut = new(_senderStub.Object, _authStub.Object)
+        {
+            ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext()
+            }
+        };
+
+        _sut.HttpContext.Request.Headers.Authorization = "Bearer someSortOfJWTToken";
     }
 
     [Fact]
@@ -35,7 +44,7 @@ public class AnswersControllerTests
         var qId = 4;
         var model = new AnswerQuestionInputModel() { Text = "my answer goes here!" };
         
-        _authStub.Setup(x => x.GetProfileIdFromToken(_sut.HttpContext)).Returns(Guid.NewGuid());
+        _authStub.Setup(x => x.GetProfileIdFromToken(It.IsAny<string>())).Returns(Guid.NewGuid());
 
         // Act
         var result = (await _sut.AnswerAsync(qId, model));
@@ -51,7 +60,7 @@ public class AnswersControllerTests
         var qId = 4;
         var model = new AnswerQuestionInputModel() { Text = "my answer goes here!" };
 
-        _authStub.Setup(x => x.GetProfileIdFromToken(_sut.HttpContext)).Returns(Guid.NewGuid());
+        _authStub.Setup(x => x.GetProfileIdFromToken(It.IsAny<string>())).Returns(Guid.NewGuid());
         _senderStub.Setup(x => x.Send(It.IsAny<AnswerQuestionCommand>(), default)).ThrowsAsync(new AlreadyAnsweredQuestionException("Already answered question."));
 
         // Act
@@ -68,7 +77,7 @@ public class AnswersControllerTests
         var qId = 4;
         var model = new AnswerQuestionInputModel() { Text = "my answer goes here!" };
 
-        _authStub.Setup(x => x.GetProfileIdFromToken(_sut.HttpContext)).Returns(Guid.NewGuid());
+        _authStub.Setup(x => x.GetProfileIdFromToken(It.IsAny<string>())).Returns(Guid.NewGuid());
         _senderStub.Setup(x => x.Send(It.IsAny<AnswerQuestionCommand>(), default)).ThrowsAsync(new EntityNotFoundException("Question not found."));
 
         // Act
@@ -84,7 +93,7 @@ public class AnswersControllerTests
         // Arrange
         var qId = 4;
 
-        _authStub.Setup(x => x.GetProfileIdFromToken(_sut.HttpContext)).Returns(Guid.NewGuid());
+        _authStub.Setup(x => x.GetProfileIdFromToken(It.IsAny<string>())).Returns(Guid.NewGuid());
 
         // Act
         var result = await _sut.DeleteAsync(qId);
@@ -99,7 +108,7 @@ public class AnswersControllerTests
         // Arrange
         var qId = 4;
 
-        _authStub.Setup(x => x.GetProfileIdFromToken(_sut.HttpContext)).Returns(Guid.NewGuid());
+        _authStub.Setup(x => x.GetProfileIdFromToken(It.IsAny<string>())).Returns(Guid.NewGuid());
         _senderStub.Setup(x => x.Send(It.IsAny<DeleteAnswerCommand>(), default)).ThrowsAsync(new EntityNotFoundException("Question or answer not found."));
         
         // Act
