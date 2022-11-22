@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BubbleSpaceApi.Api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("/[controller]")]
 public class ApiControllerBase : ControllerBase 
 {
     private ISender _sender = null!;
@@ -15,7 +15,7 @@ public class ApiControllerBase : ControllerBase
         _sender = sender;
     }
 
-    public string GetAuthorizationBearerToken()
+    internal string GetAuthorizationBearerToken()
     {
         return HttpContext.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
     }
