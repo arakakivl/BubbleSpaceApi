@@ -8,6 +8,10 @@ public class AnswerMapping : IEntityTypeConfiguration<Answer>
 {
     public void Configure(EntityTypeBuilder<Answer> builder)
     {
-        throw new NotImplementedException();
+        builder.HasKey(k => k.Id);
+
+        builder.Property(p => p.Text)
+            .HasMaxLength(2000)
+                .IsRequired();
     }
 }

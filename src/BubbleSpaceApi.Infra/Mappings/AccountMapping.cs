@@ -8,6 +8,10 @@ public class AccountMapping : IEntityTypeConfiguration<Account>
 {
     public void Configure(EntityTypeBuilder<Account> builder)
     {
-        throw new NotImplementedException();
+        builder.HasKey(k => k.Id);
+
+        builder.HasOne(acc => acc.Profile)
+            .WithOne(prof => prof.Account)
+                .HasForeignKey<Profile>(prof => prof.AccountId);
     }
 }

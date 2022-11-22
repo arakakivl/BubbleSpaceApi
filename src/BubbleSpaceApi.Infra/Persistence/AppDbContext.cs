@@ -12,79 +12,11 @@ public class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        /* Primary Keys of our domain entites */
-        #region
-        modelBuilder.Entity<Account>()
-            .HasKey(k => k.Id);
-
-        modelBuilder.Entity<Profile>()
-            .HasKey(k => k.Id);
-
-        modelBuilder.Entity<Question>()
-            .HasKey(k => k.Id);
-        
-        modelBuilder.Entity<Question>()
-            .Property(x => x.Id)
-                .ValueGeneratedOnAdd();
-
-        modelBuilder.Entity<Answer>()
-            .HasKey(k => k.Id);
-        #endregion
-
-        /* Modifying some properties */
-        #region
-        modelBuilder.Entity<Profile>()
-            .Property(p => p.Username)
-                .HasMaxLength(30)
-                    .IsRequired();
-        
-        modelBuilder.Entity<Profile>()
-            .Property(p => p.Bio)
-                .HasMaxLength(2000)
-                    .IsRequired();
-        
-        modelBuilder.Entity<Question>()
-            .Property(p => p.Title)
-                .HasMaxLength(100)
-                    .IsRequired();
-            
-        modelBuilder.Entity<Question>()
-            .Property(p => p.Description)
-                .HasMaxLength(2000)
-                    .IsRequired();
-
-        modelBuilder.Entity<Answer>()
-            .Property(p => p.Text)
-                .HasMaxLength(2000)
-                    .IsRequired();
-        #endregion
-
-        /* Relationships between entities */
-        #region
-        modelBuilder.Entity<Account>()
-            .HasOne(acc => acc.Profile)
-                .WithOne(prof => prof.Account)
-                    .HasForeignKey<Profile>(prof => prof.AccountId);
-
-        modelBuilder.Entity<Profile>()  
-            .HasMany(prof => prof.Questions)
-                .WithOne(q => q.Profile)
-                    .HasForeignKey(q => q.ProfileId);
-
-        modelBuilder.Entity<Profile>()
-            .HasMany(prof => prof.Answers)
-                .WithOne(a => a.Profile)
-                    .HasForeignKey(a => a.ProfileId);
-        
-        modelBuilder.Entity<Question>()
-            .HasMany(q => q.Answers)
-                .WithOne(a => a.Question)
-                    .HasForeignKey(a => a.QuestionId);
-        #endregion
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 
-    public DbSet<Account> Accounts => Set<Account>();
-    public DbSet<Profile> Profiles => Set<Profile>();
-    public DbSet<Question> Questions => Set<Question>();
-    public DbSet<Answer> Answers => Set<Answer>();
+    public DbSet<Account> Accounts => this.Accounts ?? Set<Account>();
+    public DbSet<Profile> Profiles => this.Profiles ?? Set<Profile>();
+    public DbSet<Question> Questions => this.Questions ?? Set<Question>();
+    public DbSet<Answer> Answers => this.Answers ?? Set<Answer>();
 }
