@@ -5,7 +5,7 @@ namespace BubbleSpaceApi.Core.Entities;
 public class BaseEntity<TKey> : IBaseEntity<TKey>
 {
     public TKey Id { get; set; }
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset CreatedAt { get; set; }
 
     public BaseEntity(TKey key)
     {
