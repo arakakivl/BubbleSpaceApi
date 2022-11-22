@@ -15,6 +15,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,9 +29,30 @@ builder.Services.AddApplicationServices();
 builder.Services.AddApiServices(builder);
 
 /// Swagger ///
-
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(x =>
+{
+    var securityScheme = new OpenApiSecurityScheme()
+    {
+        BearerFormat = "JWT",
+        Name = "JWT Auth",
+        Description = "Put ur JWT token here for being authenticated. Only your token! Not \"Bearer\"!",
+        Type = SecuritySchemeType.Http,
+        In = ParameterLocation.Header,
+        Scheme = JwtBearerDefaults.AuthenticationScheme,
+        Reference = new OpenApiReference()
+        {
+            Id = JwtBearerDefaults.AuthenticationScheme,
+            Type = ReferenceType.SecurityScheme
+        }
+    };
+
+    x.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
+    x.AddSecurityRequirement( new OpenApiSecurityRequirement()
+    {
+        { securityScheme, Array.Empty<string>() }
+    });
+});
 
 var app = builder.Build();
 
