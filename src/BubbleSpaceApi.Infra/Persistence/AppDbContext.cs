@@ -14,11 +14,11 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
-    }
+    }   
 
     public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
     {
-        foreach(var entity in ChangeTracker.Entries<IBaseEntity<object>>().Where(x => x.State == EntityState.Added).ToList())
+        foreach(var entity in ChangeTracker.Entries<IDateBaseEntity>().Where(x => x.State == EntityState.Added).ToList())
             entity.Property(x => x.CreatedAt).CurrentValue = DateTimeOffset.UtcNow;
 
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken = default(CancellationToken));
