@@ -21,7 +21,7 @@ public class AccountController : ApiControllerBase
     [HttpPost("signup")]
     public async Task<IActionResult> SignUpAsync([FromBody] RegisterUserInputModel model)
     {
-        if (HttpContext.Request.Cookies.SingleOrDefault(x => x.Key == "bsacc").Value is not null || HttpContext.Request.Cookies.SingleOrDefault(x => x.Key == "bsrfh").Value is not null)
+        if (_auth.IsAuthenticated(GetAuthorizationBearerToken()) || _auth.IsAuthenticated(GetRefreshCookieToken()))
             return BadRequest("Você já está autenticado.");
 
         var cmd = new RegisterUserCommand(model.Username, model.Email, model.Password);
@@ -33,8 +33,7 @@ public class AccountController : ApiControllerBase
     [HttpPost("signin")]
     public async Task<IActionResult> SignInAsync([FromBody] LoginUserInputModel model)
     {
-
-        if (HttpContext.Request.Cookies.SingleOrDefault(x => x.Key == "bsacc").Value is not null || HttpContext.Request.Cookies.SingleOrDefault(x => x.Key == "bsrfh").Value is not null)
+        if (_auth.IsAuthenticated(GetAuthorizationBearerToken()) || _auth.IsAuthenticated(GetRefreshCookieToken()))
             return BadRequest("Você já está autenticado.");
 
         var cmd = new LoginUserCommand(model.UsernameOrEmail, model.Password);
@@ -44,17 +43,30 @@ public class AccountController : ApiControllerBase
             return BadRequest("Usuário, email ou senha inválidos.");
         
         // Tokens, claims and cookies config
-        Dictionary<string, string> claims = new()
-        {
-            { "ProfileId", profileId.ToString() }
-        };
+        Dictionary<string, string> claims = new() 
+        { { "ProfileId", profileId.ToString() } };
 
-        HttpContext.Response.Cookies.Append("bsacc", _auth.GenerateToken(claims));
         HttpContext.Response.Cookies.Append("bsrfh", _auth.GenerateToken(claims, true), new CookieOptions() 
-        {
-            HttpOnly = true
-        });
+        { HttpOnly = true });
 
-        return Ok();
+        return Ok(new { bsacc = _auth.GenerateToken(claims) });
+    }
+
+    [HttpPost("bsrfht")]
+    public async Task<IActionResult> RefreshAsync()
+    {
+        if (_auth.IsAuthenticated(GetAuthorizationBearerToken()) || _auth.IsAuthenticated(GetRefreshCookieToken()))
+            return BadRequest("Você já está autenticado.");
+    
+        // Tokens, claims and cookies config
+        var profileId = _auth.GetProfileIdFromToken(GetRefreshCookieToken());
+
+        Dictionary<string, string> claims = new() 
+        { { "ProfileId", profileId.ToString() } };
+
+        HttpContext.Response.Cookies.Append("bsrfh", _auth.GenerateToken(claims, true), new CookieOptions() 
+        { HttpOnly = true });
+
+        return await Task.FromResult(Ok(new { bsacc = _auth.GenerateToken(claims) }));
     }
 }

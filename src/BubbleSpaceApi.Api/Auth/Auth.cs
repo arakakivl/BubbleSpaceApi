@@ -40,6 +40,18 @@ public class Auth : IAuth
         return Guid.Parse(claims.FirstOrDefault(x => x.Type == "ProfileId")!.Value);
     }
 
+    public bool IsAuthenticated(string token)
+    {
+        if (string.IsNullOrEmpty(token))
+            return false;
+            
+        var jwtSecurityToken = new JwtSecurityToken(token);
+        if (jwtSecurityToken is null || (jwtSecurityToken.ValidFrom > DateTimeOffset.UtcNow) || (jwtSecurityToken.ValidTo < DateTimeOffset.UtcNow))
+            return false;
+        
+        return true;
+    }
+
     private IEnumerable<Claim> GetClaims(string token)
     {
         var validationParams = new TokenValidationParameters()

@@ -15,8 +15,9 @@ public class ApiControllerBase : ControllerBase
         _sender = sender;
     }
 
-    internal string GetAuthorizationBearerToken()
-    {
-        return HttpContext.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
-    }
+    internal string GetAuthorizationBearerToken() =>
+        HttpContext.Request.Headers.Authorization.ToString().Replace("Bearer ", "");
+
+    internal string GetRefreshCookieToken() =>
+        HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "bsrfh").Value;
 }

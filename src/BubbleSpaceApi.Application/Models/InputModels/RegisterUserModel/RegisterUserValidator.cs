@@ -25,7 +25,7 @@ public class RegisterUserValidator : AbstractValidator<RegisterUserInputModel>
         _unitOfWork = unitOfWork;
 
         // Username validation
-        RuleFor(user => user.Username).Matches("")
+        RuleFor(user => user.Username.Trim()).Matches("")
             .WithMessage(invalidUsernameMessage);
 
         RuleFor(user => user.Username).MaximumLength(maxUsernameLength)
