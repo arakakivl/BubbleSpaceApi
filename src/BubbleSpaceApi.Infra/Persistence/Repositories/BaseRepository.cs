@@ -21,13 +21,10 @@ public class BaseRepository<TKey, TEntity> : IBaseRepository<TKey, TEntity> wher
         return await Task.FromResult(entity.Id);
     }
 
-    public virtual async Task<ICollection<TEntity>> GetEntitiesAsync()
-    {
-        return await Task.FromResult(_dbSet.ToList());
-        
-    }
+    public virtual async Task<IQueryable<TEntity>> GetEntitiesAsync() =>
+        await Task.FromResult(_dbSet);
 
-    public virtual async Task<ICollection<TEntity>> GetEntitiesAsync(Expression<Func<TEntity, bool>>? filter = null, string includeProperties = "")
+    public virtual async Task<IQueryable<TEntity>> GetEntitiesAsync(Expression<Func<TEntity, bool>>? filter = null, string includeProperties = "")
     {
         IQueryable<TEntity> query = _dbSet;
         if (filter is not null)
@@ -36,13 +33,11 @@ public class BaseRepository<TKey, TEntity> : IBaseRepository<TKey, TEntity> wher
         foreach(var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
             query = query.Include(includeProp);
         
-        return await Task.FromResult(query.ToList());
+        return await Task.FromResult(query);
     }
 
-    public virtual async Task<TEntity?> GetEntityAsync(TKey key)
-    {
-        return await _dbSet.FindAsync(key);
-    }
+    public virtual async Task<TEntity?> GetEntityAsync(TKey key) =>
+        await _dbSet.FindAsync(key);
 
     public virtual async Task UpdateAsync(TEntity entity)
     {

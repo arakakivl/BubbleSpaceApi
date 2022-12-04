@@ -34,7 +34,7 @@ public class DeleteAnswerCommandTests
 
         var cmd = new DeleteAnswerCommand(qId, pId);
 
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == cmd.QuestionId, "Answers")).ReturnsAsync(new List<Question>() { question });
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == cmd.QuestionId, "Answers")).ReturnsAsync(new List<Question>() { question }.AsQueryable());
 
         _unitOfWorkStub.Setup(x => x.AnswerRepository.DeleteAsync(It.IsAny<Guid>())).Verifiable();
         _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();
@@ -62,7 +62,7 @@ public class DeleteAnswerCommandTests
 
         var cmd = new DeleteAnswerCommand(qId, pId);
 
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == cmd.QuestionId, "Answers")).ReturnsAsync(new List<Question>() {  });
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == cmd.QuestionId, "Answers")).ReturnsAsync(new List<Question>() {  }.AsQueryable());
 
         _unitOfWorkStub.Setup(x => x.AnswerRepository.DeleteAsync(It.IsAny<Guid>())).Verifiable();
         _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();
@@ -89,7 +89,7 @@ public class DeleteAnswerCommandTests
 
         var cmd = new DeleteAnswerCommand(qId, pId);
 
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == cmd.QuestionId, "Answers")).ReturnsAsync(new List<Question>() { question });
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == cmd.QuestionId, "Answers")).ReturnsAsync(new List<Question>() { question }.AsQueryable());
 
         _unitOfWorkStub.Setup(x => x.AnswerRepository.DeleteAsync(It.IsAny<Guid>())).Verifiable();
         _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();

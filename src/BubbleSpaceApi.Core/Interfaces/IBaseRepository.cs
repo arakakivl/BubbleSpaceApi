@@ -7,10 +7,10 @@ public interface IBaseRepository<TKey, TEntity> where TEntity : BaseEntity<TKey>
 {
     Task<TKey> AddAsync(TEntity entity);
 
-    Task<ICollection<TEntity>> GetEntitiesAsync();
+    Task<IQueryable<TEntity>> GetEntitiesAsync();
     Task<TEntity?> GetEntityAsync(TKey key);
 
-    Task<ICollection<TEntity>> GetEntitiesAsync(Expression<Func<TEntity, bool>>? filter = null, string includeProperties = "");
+    Task<IQueryable<TEntity>> GetEntitiesAsync(Expression<Func<TEntity, bool>>? filter = null, string includeProperties = "");
 
     Task UpdateAsync(TEntity entity);
     Task DeleteAsync(TKey key);

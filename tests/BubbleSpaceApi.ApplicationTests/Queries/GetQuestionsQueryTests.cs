@@ -22,7 +22,7 @@ public class GetQuestionsQueryTests
     public async Task Handle_ShouldReturnQuestions_WhenExecuted()
     {
         // Arrange
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(null, "Profile,Answers")).ReturnsAsync(new List<Question>());
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(null, "Profile,Answers")).ReturnsAsync(new List<Question>().AsQueryable());
         var query = new GetQuestionsQuery();
 
         // Act
