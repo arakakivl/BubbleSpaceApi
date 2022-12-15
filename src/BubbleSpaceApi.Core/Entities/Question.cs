@@ -7,10 +7,10 @@ public class Question : BaseEntity<long>
     public string Title { get; set; } = null!;
     public string Description { get; set; } = "";
 
-    public ICollection<Answer> Answers { get; set; } = new List<Answer>();
+    public virtual ICollection<Answer> Answers { get; set; } = new List<Answer>();
 
     public Guid ProfileId { get; set; }
-    public Profile Profile { get; set; } = null!;
+    public virtual Profile Profile { get; set; } = null!;
 
     public Question() : base(0)
     {
