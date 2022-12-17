@@ -15,7 +15,7 @@ public static class AddServices
         collection.AddMediatR(typeof(RegisterUserCommand));
     
         // In order to use automatic validations, we can't use async rules for our validators!
-        collection.AddFluentValidationAutoValidation();
+        // collection.AddFluentValidationAutoValidation();
 
         return collection;
     }

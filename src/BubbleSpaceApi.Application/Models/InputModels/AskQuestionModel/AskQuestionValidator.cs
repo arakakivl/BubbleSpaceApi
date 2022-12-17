@@ -15,11 +15,8 @@ public class AskQuestionValidator : AbstractValidator<AskQuestionInputModel>
     
     private const int maximumLengthForQuestionDesc = 2000;
 
-    private readonly IUnitOfWork _unitOfWork;
-    public AskQuestionValidator(IUnitOfWork unitOfWork)
+    public AskQuestionValidator()
     {
-        _unitOfWork = unitOfWork;
-
         RuleFor(q => q.Title).MaximumLength(maximumLengthForQuestionTitle)
             .WithMessage(questionTitleLengthMessageError);
 

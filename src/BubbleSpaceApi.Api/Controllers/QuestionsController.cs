@@ -24,6 +24,9 @@ public class QuestionsController : ApiControllerBase
     [HttpPost("ask")]
     public async Task<IActionResult> AskAsync([FromBody] AskQuestionInputModel model)
     {
+        if (!model.IsValid())
+            return model.ReturnUnprocessableEntity();
+
         var profId = _auth.GetProfileIdFromToken(GetAuthorizationBearerToken());
         var cmd = new AskQuestionCommand(profId, model.Title, model.Description);
 

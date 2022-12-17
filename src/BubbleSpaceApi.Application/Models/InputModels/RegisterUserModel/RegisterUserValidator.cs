@@ -19,11 +19,8 @@ public class RegisterUserValidator : AbstractValidator<RegisterUserInputModel>
     // Some config
     private const int maxUsernameLength = 30;
 
-    private readonly IUnitOfWork _unitOfWork;
-    public RegisterUserValidator(IUnitOfWork unitOfWork)
+    public RegisterUserValidator()
     {
-        _unitOfWork = unitOfWork;
-
         // Username validation
         RuleFor(user => user.Username.Trim()).Matches("")
             .WithMessage(invalidUsernameMessage);
@@ -31,20 +28,8 @@ public class RegisterUserValidator : AbstractValidator<RegisterUserInputModel>
         RuleFor(user => user.Username).MaximumLength(maxUsernameLength)
             .WithMessage(invalidUsernameMessage);
 
-        RuleFor(user => user).Must(user => !(UsernameAlreadyInUse(user.Username).Result))
-            .WithMessage(usernameAlreadyInUseMessage);
-
         // Email validation
         RuleFor(user => user.Email).Matches(validEmailRegex)
             .WithMessage(invalidEmailMessage);
-
-        RuleFor(user => user).Must(user => !(EmailAlreadyInUse(user.Email).Result))
-            .WithMessage(emailAlreadyInUseMessage);
     }
-
-    private async Task<bool> UsernameAlreadyInUse(string username) =>
-        (await _unitOfWork.ProfileRepository.GetByUsernameAsync(username)) != null;
-
-    private async Task<bool> EmailAlreadyInUse(string email) =>
-        (await _unitOfWork.AccountRepository.GetByEmailAsync(email)) != null;
 }

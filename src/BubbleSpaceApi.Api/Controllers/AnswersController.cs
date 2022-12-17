@@ -13,7 +13,7 @@ namespace BubbleSpaceApi.Api.Controllers;
 public class AnswersController : ApiControllerBase
 {
     private readonly IAuth _auth;
-   
+
     public AnswersController(ISender sender, IAuth auth) : base(sender)
     {
         _auth = auth;
@@ -22,6 +22,9 @@ public class AnswersController : ApiControllerBase
     [HttpPost("{questionId}")]
     public async Task<IActionResult> AnswerAsync([FromRoute] long questionId, [FromBody] AnswerQuestionInputModel model)
     {
+        if (!model.IsValid())
+            return model.ReturnUnprocessableEntity();
+
         try
         {
             var profileId = _auth.GetProfileIdFromToken(GetAuthorizationBearerToken());

@@ -23,6 +23,8 @@ public class AccountController : ApiControllerBase
     {
         if (_auth.IsAuthenticated(GetAuthorizationBearerToken()) || _auth.IsAuthenticated(GetRefreshCookieToken()))
             return BadRequest("Você já está autenticado.");
+        else if (!model.IsValid())
+            return model.ReturnUnprocessableEntity();
 
         var cmd = new RegisterUserCommand(model.Username, model.Email, model.Password);
         await Sender.Send(cmd);
