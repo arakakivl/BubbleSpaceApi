@@ -4,16 +4,24 @@ using BubbleSpaceApi.Domain.Entities;
 using BubbleSpaceApi.Domain.Interfaces;
 using Moq;
 using Xunit;
+using AutoFixture;
 
 namespace BubbleSpaceApi.ApplicationTests.Commands;
 
 public class DeleteQuestionCommandTests
 {
+    private readonly Fixture _fixture;
+
     private readonly Mock<IUnitOfWork> _unitOfWorkStub;
     private readonly DeleteQuestionCommandHandler _sut;
 
     public DeleteQuestionCommandTests()
     {
+        _fixture = new();
+
+        _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(x => _fixture.Behaviors.Remove(x));
+        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
         _unitOfWorkStub = new();
         _sut = new(_unitOfWorkStub.Object);
     }
@@ -22,27 +30,19 @@ public class DeleteQuestionCommandTests
     public async Task Handle_ShouldDelete_WhenFoundQuestion()
     {
         // Arrange
-        var qId = 10;
-        var pId = Guid.NewGuid();
-        
-        Question q = new()
-        {
-            Id = qId,
-            ProfileId = pId
-        };
+        var cmd = _fixture.Create<DeleteQuestionCommand>();
+        var question = _fixture.Build<Question>().With(x => x.Id, cmd.QuestionId).With(x => x.ProfileId, cmd.ProfileId).Create();
 
-        var cmd = new DeleteQuestionCommand(q.Id, q.ProfileId);
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntityAsync(cmd.QuestionId)).ReturnsAsync(question);
 
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntityAsync(q.Id)).ReturnsAsync(q);
-
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.DeleteAsync(q.Id)).Verifiable();
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.DeleteAsync(question.Id)).Verifiable();
         _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();
 
         // Act
         await _sut.Handle(cmd, default);
 
         // Assert
-        _unitOfWorkStub.Verify(x => x.QuestionRepository.DeleteAsync(q.Id), Times.Once);
+        _unitOfWorkStub.Verify(x => x.QuestionRepository.DeleteAsync(question.Id), Times.Once);
         _unitOfWorkStub.Verify(x => x.SaveChangesAsync(), Times.Once);
     }
 
@@ -50,18 +50,18 @@ public class DeleteQuestionCommandTests
     public async Task Handle_ShouldThrowEntityNotFoundException_WhenNotFoundQuestion()
     {
         // Arrange
-        var qId = 10;
-        var cmd = new DeleteQuestionCommand(qId, Guid.NewGuid());
+        var cmd = _fixture.Create<DeleteQuestionCommand>();
+        var question = _fixture.Build<Question>().With(x => x.Id, cmd.QuestionId).With(x => x.ProfileId, cmd.ProfileId).Create();
 
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntityAsync(qId)).ReturnsAsync((Question?)null);
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntityAsync(cmd.QuestionId)).ReturnsAsync((Question?)null);
 
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.DeleteAsync(qId)).Verifiable();
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.DeleteAsync(question.Id)).Verifiable();
         _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();
 
         // Assert
         await Assert.ThrowsAsync<EntityNotFoundException>( async () => await _sut.Handle(cmd, default));
 
-        _unitOfWorkStub.Verify(x => x.QuestionRepository.DeleteAsync(qId), Times.Never);
+        _unitOfWorkStub.Verify(x => x.QuestionRepository.DeleteAsync(question.Id), Times.Never);
         _unitOfWorkStub.Verify(x => x.SaveChangesAsync(), Times.Never);
     }
 
@@ -69,20 +69,18 @@ public class DeleteQuestionCommandTests
     public async Task Handle_ShouldThrowForbiddenException_WhenQuestionIsNotFromUser()
     {
         // Arrange
-        var pId = Guid.NewGuid();
-        var qId = 10;
+        var cmd = _fixture.Create<DeleteQuestionCommand>();
+        var question = _fixture.Build<Question>().With(x => x.Id, cmd.QuestionId).Create();
 
-        var cmd = new DeleteQuestionCommand(qId, pId);
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntityAsync(cmd.QuestionId)).ReturnsAsync(question);
 
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntityAsync(qId)).ReturnsAsync(new Question() { Id = qId, ProfileId = Guid.NewGuid() });
-
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.DeleteAsync(qId)).Verifiable();
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.DeleteAsync(question.Id)).Verifiable();
         _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();
 
         // Assert
         await Assert.ThrowsAsync<ForbiddenException>(async () => await _sut.Handle(cmd, default));
 
-        _unitOfWorkStub.Verify(x => x.QuestionRepository.DeleteAsync(qId), Times.Never);
+        _unitOfWorkStub.Verify(x => x.QuestionRepository.DeleteAsync(question.Id), Times.Never);
         _unitOfWorkStub.Verify(x => x.SaveChangesAsync(), Times.Never);
     }
 }

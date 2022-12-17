@@ -4,10 +4,10 @@ namespace BubbleSpaceApi.Application.Commands.AskQuestionCommand;
 
 public class AskQuestionCommand : IRequest<long>
 {
-    public Guid ProfileId { get; }
+    public Guid ProfileId { get; set;}
 
-    public string Title { get; }
-    public string Description { get; } = "";
+    public string Title { get; set;}
+    public string Description { get; set; } = "";
 
     public AskQuestionCommand(Guid profileId, string title, string description = "")
     {

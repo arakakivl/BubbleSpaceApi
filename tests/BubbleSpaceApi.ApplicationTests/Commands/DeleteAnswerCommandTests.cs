@@ -5,16 +5,24 @@ using BubbleSpaceApi.Domain.Entities;
 using BubbleSpaceApi.Domain.Interfaces;
 using Moq;
 using Xunit;
+using AutoFixture;
 
 namespace BubbleSpaceApi.ApplicationTests.Commands;
 
 public class DeleteAnswerCommandTests
 {
+    private readonly Fixture _fixture;
+
     private readonly Mock<IUnitOfWork> _unitOfWorkStub;
     private readonly DeleteAnswerCommandHandler _sut;
 
     public DeleteAnswerCommandTests()
     {
+        _fixture = new();
+
+        _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(x => _fixture.Behaviors.Remove(x));
+        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
         _unitOfWorkStub = new();
         _sut = new(_unitOfWorkStub.Object);
     }
@@ -23,16 +31,10 @@ public class DeleteAnswerCommandTests
     public async Task Handle_ShouldDelete_WhenExecuted()
     {
         // Arrange
-        var pId = Guid.NewGuid();
-        var qId = 10;
+        var cmd = _fixture.Create<DeleteAnswerCommand>();
 
-        var question = new Question()
-        {
-            Id = qId,
-            Answers = new List<Answer>() { new() { ProfileId = pId } }
-        };
-
-        var cmd = new DeleteAnswerCommand(qId, pId);
+        var question = _fixture.Build<Question>().With(x => x.Id, cmd.QuestionId).Create();
+        question.Answers = new List<Answer>() { _fixture.Build<Answer>().With(x => x.ProfileId, cmd.ProfileId).Create() };
 
         _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == cmd.QuestionId, "Answers")).ReturnsAsync(new List<Question>() { question }.AsQueryable());
 
@@ -51,16 +53,7 @@ public class DeleteAnswerCommandTests
     public async Task Handle_ShouldThrowEntityNotFoundException_WhenInexistentQuestion()
     {
         // Arrange
-        var pId = Guid.NewGuid();
-        var qId = 10;
-
-        var question = new Question()
-        {
-            Id = qId,
-            Answers = new List<Answer>() { new() { ProfileId = pId } }
-        };
-
-        var cmd = new DeleteAnswerCommand(qId, pId);
+        var cmd = _fixture.Create<DeleteAnswerCommand>();
 
         _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == cmd.QuestionId, "Answers")).ReturnsAsync(new List<Question>() {  }.AsQueryable());
 
@@ -78,16 +71,8 @@ public class DeleteAnswerCommandTests
     public async Task Handle_ShouldThrowEntityNotFoundException_WhenUserNotAnswered()
     {
         // Arrange
-        var pId = Guid.NewGuid();
-        var qId = 10;
-
-        var question = new Question()
-        {
-            Id = qId,
-            Answers = new List<Answer>()
-        };
-
-        var cmd = new DeleteAnswerCommand(qId, pId);
+        var cmd = _fixture.Create<DeleteAnswerCommand>();
+        var question = _fixture.Build<Question>().With(x => x.Id, cmd.QuestionId).With(x => x.Answers, new List<Answer>()).Create();
 
         _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == cmd.QuestionId, "Answers")).ReturnsAsync(new List<Question>() { question }.AsQueryable());
 

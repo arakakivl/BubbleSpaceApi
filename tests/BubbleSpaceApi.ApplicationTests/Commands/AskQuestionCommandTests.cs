@@ -1,3 +1,4 @@
+using AutoFixture;
 using BubbleSpaceApi.Application.Commands.AskQuestionCommand;
 using BubbleSpaceApi.Domain.Entities;
 using BubbleSpaceApi.Domain.Interfaces;
@@ -8,11 +9,18 @@ namespace BubbleSpaceApi.ApplicationTests.Commands;
 
 public class AskQuestionCommandTests
 {
+    private readonly Fixture _fixture;
+
     private readonly Mock<IUnitOfWork> _unitOfWorkStub;
     private readonly AskQuestionCommandHandler _sut;
 
     public AskQuestionCommandTests()
     {
+        _fixture = new();
+
+        _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(x => _fixture.Behaviors.Remove(x));
+        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
         _unitOfWorkStub = new();
         _sut = new(_unitOfWorkStub.Object);
     }
@@ -21,17 +29,10 @@ public class AskQuestionCommandTests
     public async Task Handle_ShouldAddToDatabase_WhenExecuted()
     {
         // Arrange
-        var proileId = Guid.NewGuid();
-        Question q = new()
-        {
-            ProfileId = proileId,
-            Title = "What do you like to do when you're really sad?",
-            Description = ""
-        };
+        var question = _fixture.Create<Question>();
+        var cmd = _fixture.Build<AskQuestionCommand>().With(x => x.ProfileId, question.ProfileId).Create();
 
-        AskQuestionCommand cmd = new(Guid.NewGuid(), q.Title, q.Description);
-
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.AddAsync(q)).ReturnsAsync(q.Id);
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.AddAsync(question)).ReturnsAsync(question.Id);
 
         _unitOfWorkStub.Setup(x => x.QuestionRepository.AddAsync(It.IsAny<Question>())).Verifiable();
         _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();
@@ -40,8 +41,6 @@ public class AskQuestionCommandTests
         var r = await _sut.Handle(cmd, default);
 
         // Assert
-        Assert.Equal(q.ProfileId, proileId);
-
         _unitOfWorkStub.Verify(x => x.QuestionRepository.AddAsync(It.IsAny<Question>()), Times.Once);
         _unitOfWorkStub.Verify(x => x.SaveChangesAsync(), Times.Once);
     }

@@ -5,16 +5,24 @@ using BubbleSpaceApi.Domain.Entities;
 using BubbleSpaceApi.Domain.Interfaces;
 using Moq;
 using Xunit;
+using AutoFixture;
 
 namespace BubbleSpaceApi.ApplicationTests.Commands;
 
 public class AnswerQuestionCommandTests
 {
+    private readonly Fixture _fixture;
+
     private readonly Mock<IUnitOfWork> _unitOfWorkStub;
     private readonly AnswerQuestionCommandHandler _sut;
 
     public AnswerQuestionCommandTests()
     {
+        _fixture = new();
+
+        _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(x => _fixture.Behaviors.Remove(x));
+        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
         _unitOfWorkStub = new();
         _sut = new(_unitOfWorkStub.Object);
     }
@@ -23,18 +31,13 @@ public class AnswerQuestionCommandTests
     public async Task AnswerQuestion_ShouldAnswer_WhenNotAlreadyAnswered()
     {
         // Arrange
-        var qId = 10;
-        var pId = Guid.NewGuid();
+        var question = _fixture.Create<Question>();
+        var cmd = _fixture.Build<AnswerQuestionCommand>().With(x => x.QuestionId, question.Id).Create();
 
-        Question question = new()
-        {
-            Id = qId,
-            Answers = new List<Answer>()  
-        };
+        var questions = new List<Question>() { question }.AsQueryable();
 
-        AnswerQuestionCommand cmd = new(qId, pId, "some answer");
-
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == cmd.QuestionId, "Answers")).ReturnsAsync(new List<Question>() { question }.AsQueryable());
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == cmd.QuestionId, "Answers"))
+            .ReturnsAsync(questions);
 
         _unitOfWorkStub.Setup(x => x.AnswerRepository.AddAsync(It.IsAny<Answer>())).Verifiable();
         _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();
@@ -51,18 +54,16 @@ public class AnswerQuestionCommandTests
     public async Task AnswerQuestion_ShouldThrownAlreadyAnsweredQuestion_WhenAlreadyAnswered()
     {
         // Arrange
-        var qId = 10;
         var pId = Guid.NewGuid();
+        var answers = new List<Answer>() { { new() { ProfileId = pId } } };
 
-        Question question = new()
-        {
-            Id = qId,
-            Answers = new List<Answer>() { new Answer() { ProfileId = pId }}   
-        };
+        var question = _fixture.Build<Question>().With(x => x.Answers, answers).Create();
+        var cmd = _fixture.Build<AnswerQuestionCommand>().With(x => x.QuestionId, question.Id).With(x => x.ProfileId, pId).Create();
 
-        AnswerQuestionCommand cmd = new(qId, pId, "some answer");
+        var questions = new List<Question>() { question }.AsQueryable();
 
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == cmd.QuestionId, "Answers")).ReturnsAsync(new List<Question>() { question }.AsQueryable());
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == cmd.QuestionId, "Answers"))
+            .ReturnsAsync(questions);
 
         _unitOfWorkStub.Setup(x => x.AnswerRepository.AddAsync(It.IsAny<Answer>())).Verifiable();
         _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();
@@ -78,10 +79,11 @@ public class AnswerQuestionCommandTests
     public async Task AnswerQuestion_ShouldThrownEntityNotFoundException__WhenInexistentQuestion()
     {
         // Arrange
-        var qId = 10;
-        AnswerQuestionCommand cmd = new(qId, Guid.NewGuid(), "some answer");
+        var cmd = _fixture.Create<AnswerQuestionCommand>();
+        var questions = _fixture.CreateMany<Question>(0).AsQueryable();
 
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == cmd.QuestionId, "Answers")).ReturnsAsync(new List<Question>() {  }.AsQueryable());
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == cmd.QuestionId, "Answers"))
+            .ReturnsAsync(questions);
 
         _unitOfWorkStub.Setup(x => x.AnswerRepository.AddAsync(It.IsAny<Answer>())).Verifiable();
         _unitOfWorkStub.Setup(x => x.SaveChangesAsync()).Verifiable();

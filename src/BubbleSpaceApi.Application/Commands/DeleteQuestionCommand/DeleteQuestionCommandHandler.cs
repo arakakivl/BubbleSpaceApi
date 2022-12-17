@@ -14,13 +14,13 @@ public class DeleteQuestionCommandHandler : IRequestHandler<DeleteQuestionComman
     
     public async Task<Unit> Handle(DeleteQuestionCommand request, CancellationToken cancellationToken)
     {
-        var question = await _unitOfWork.QuestionRepository.GetEntityAsync(request.Id);
+        var question = await _unitOfWork.QuestionRepository.GetEntityAsync(request.QuestionId);
         if (question is null)
             throw new EntityNotFoundException("Pergunta não encontrada.");
         else if (!question.UserOwnsQuestion(request.ProfileId))
             throw new ForbiddenException("Ação não autorizada.");
 
-        await _unitOfWork.QuestionRepository.DeleteAsync(request.Id);
+        await _unitOfWork.QuestionRepository.DeleteAsync(request.QuestionId);
         await _unitOfWork.SaveChangesAsync();
 
         return Unit.Value;
