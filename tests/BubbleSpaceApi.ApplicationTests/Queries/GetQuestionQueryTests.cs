@@ -30,6 +30,7 @@ public class GetQuestionQueryTests
         List<Answer> answers = new(); 
 
         _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == query.Id, "Profile,Answers")).ReturnsAsync(new List<Question>() { new Question() { Id = id, Profile = p, Answers = answers  } }.AsQueryable());
+        _unitOfWorkStub.Setup(x => x.ProfileRepository.GetEntityAsync(It.IsAny<Guid>())).ReturnsAsync(new Profile());
 
         // Act
         var result = await _sut.Handle(query, default);
@@ -47,6 +48,7 @@ public class GetQuestionQueryTests
         var query = new GetQuestionQuery(id);
 
         _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == query.Id, "Profile,Answers")).ReturnsAsync(new List<Question>() {   }.AsQueryable());
+        _unitOfWorkStub.Setup(x => x.ProfileRepository.GetEntityAsync(It.IsAny<Guid>())).ReturnsAsync(new Profile());
 
         // Act
         await Assert.ThrowsAsync<EntityNotFoundException>(async () => await _sut.Handle(query, default));

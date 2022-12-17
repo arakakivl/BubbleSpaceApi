@@ -23,6 +23,8 @@ public class GetQuestionsQueryTests
     {
         // Arrange
         _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(null, "Profile,Answers")).ReturnsAsync(new List<Question>().AsQueryable());
+        _unitOfWorkStub.Setup(x => x.ProfileRepository.GetEntityAsync(It.IsAny<Guid>())).ReturnsAsync(new Profile());
+        
         var query = new GetQuestionsQuery();
 
         // Act
