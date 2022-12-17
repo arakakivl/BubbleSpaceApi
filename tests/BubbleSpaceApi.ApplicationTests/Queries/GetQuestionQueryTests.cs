@@ -5,16 +5,24 @@ using BubbleSpaceApi.Domain.Entities;
 using BubbleSpaceApi.Domain.Interfaces;
 using Moq;
 using Xunit;
+using AutoFixture;
 
 namespace BubbleSpaceApi.ApplicationTests.Queries;
 
 public class GetQuestionQueryTests
 {
+    private readonly Fixture _fixture;
+
     private readonly Mock<IUnitOfWork> _unitOfWorkStub;
     private readonly GetQuestionQueryHandler _sut;
 
     public GetQuestionQueryTests()
     {
+        _fixture = new();
+
+        _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(x => _fixture.Behaviors.Remove(x));
+        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
         _unitOfWorkStub = new();
         _sut = new(_unitOfWorkStub.Object);
     }
@@ -23,13 +31,10 @@ public class GetQuestionQueryTests
     public async Task Handle_ShouldReturnQuestion_WhenExistentQuestion()
     {
         // Arrange
-        long id = 10;
-        var query = new GetQuestionQuery(id);
+        var query = _fixture.Create<GetQuestionQuery>();
+        var question = _fixture.Build<Question>().With(x => x.Id, query.QuestionId).Create();
 
-        Profile p = new Profile();
-        List<Answer> answers = new(); 
-
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == query.Id, "Profile,Answers")).ReturnsAsync(new List<Question>() { new Question() { Id = id, Profile = p, Answers = answers  } }.AsQueryable());
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == query.QuestionId, "Profile,Answers")).ReturnsAsync(new List<Question>() { question }.AsQueryable());
         _unitOfWorkStub.Setup(x => x.ProfileRepository.GetEntityAsync(It.IsAny<Guid>())).ReturnsAsync(new Profile());
 
         // Act
@@ -44,10 +49,9 @@ public class GetQuestionQueryTests
     public async Task Handle_ShouldThrowEntityNotFoundException_WhenQuestionNotFound()
     {
         // Arrange
-        long id = 10;
-        var query = new GetQuestionQuery(id);
+        var query = _fixture.Create<GetQuestionQuery>();
 
-        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == query.Id, "Profile,Answers")).ReturnsAsync(new List<Question>() {   }.AsQueryable());
+        _unitOfWorkStub.Setup(x => x.QuestionRepository.GetEntitiesAsync(q => q.Id == query.QuestionId, "Profile,Answers")).ReturnsAsync(new List<Question>().AsQueryable());
         _unitOfWorkStub.Setup(x => x.ProfileRepository.GetEntityAsync(It.IsAny<Guid>())).ReturnsAsync(new Profile());
 
         // Act

@@ -16,7 +16,7 @@ public class GetQuestionQueryHandler : IRequestHandler<GetQuestionQuery, Questio
 
     public async Task<QuestionViewModel> Handle(GetQuestionQuery request, CancellationToken cancellationToken)
     {
-        var question = (await _unitOfWork.QuestionRepository.GetEntitiesAsync(x => x.Id == request.Id, "Profile,Answers")).SingleOrDefault();
+        var question = (await _unitOfWork.QuestionRepository.GetEntitiesAsync(x => x.Id == request.QuestionId, "Profile,Answers")).SingleOrDefault();
         if (question is null)
             throw new EntityNotFoundException("Pergunta não encontrada.");
         

@@ -5,9 +5,9 @@ namespace BubbleSpaceApi.Application.Queries.GetQuestionQuery;
 
 public class GetQuestionQuery : IRequest<QuestionViewModel>
 {
-    public long Id { get; set; }
+    public long QuestionId { get; set; }
     public GetQuestionQuery(long id)
     {
-        Id = id;
+        QuestionId = id;
     }
 }
