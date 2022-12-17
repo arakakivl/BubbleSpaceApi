@@ -15,6 +15,13 @@ public class GetQuestionsQueryHandler : IRequestHandler<GetQuestionsQuery, IColl
 
     public async Task<ICollection<QuestionViewModel>> Handle(GetQuestionsQuery request, CancellationToken cancellationToken)
     {
-        return (await _unitOfWork.QuestionRepository.GetEntitiesAsync(null, "Profile,Answers")).Select(x => x.AsViewModel()).ToList();
+        var questions = (await _unitOfWork.QuestionRepository.GetEntitiesAsync(null, "Profile,Answers"));
+
+        // Inserting each profile into each answer in each question. This is neccessary because we need to return it as ViewModel.
+        foreach(var q in questions)
+            foreach(var a in q.Answers)
+                a.Profile = (await _unitOfWork.ProfileRepository.GetEntityAsync(a.ProfileId))!;
+
+        return questions.Select(x => x.AsViewModel()).ToList();
     }
 }

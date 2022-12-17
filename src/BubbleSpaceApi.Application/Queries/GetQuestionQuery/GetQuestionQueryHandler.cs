@@ -20,6 +20,10 @@ public class GetQuestionQueryHandler : IRequestHandler<GetQuestionQuery, Questio
         if (question is null)
             throw new EntityNotFoundException("Pergunta não encontrada.");
         
+        // Inserting each profile into each answer. This is neccessary because we need to return it as ViewModel.
+        foreach(var a in question.Answers)
+            a.Profile = (await _unitOfWork.ProfileRepository.GetEntityAsync(a.ProfileId))!;
+
         return question.AsViewModel();
     }
 }
