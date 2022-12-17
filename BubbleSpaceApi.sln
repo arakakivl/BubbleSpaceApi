@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A6902325-52BE-4FA9-A2B1-8EFB0F3B7712}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BubbleSpaceApi.Core", "src\BubbleSpaceApi.Core\BubbleSpaceApi.Core.csproj", "{97996E44-EDD3-4A43-98B3-51390417162B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BubbleSpaceApi.Domain", "src\BubbleSpaceApi.Domain\BubbleSpaceApi.Domain.csproj", "{97996E44-EDD3-4A43-98B3-51390417162B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BubbleSpaceApi.Infra", "src\BubbleSpaceApi.Infra\BubbleSpaceApi.Infra.csproj", "{F36CB84A-39F4-487D-A4D4-6C45E1A0780B}"
 EndProject
@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BubbleSpaceApi.Api", "src\B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{316B3C56-E177-4593-A9EF-A18415FE4C44}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BubbleSpaceApi.CoreTests", "tests\BubbleSpaceApi.CoreTests\BubbleSpaceApi.CoreTests.csproj", "{37BED5E9-F86B-4E7B-9286-B2008099A5AD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BubbleSpaceApi.DomainTests", "tests\BubbleSpaceApi.DomainTests\BubbleSpaceApi.DomainTests.csproj", "{37BED5E9-F86B-4E7B-9286-B2008099A5AD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BubbleSpaceApi.ApplicationTests", "tests\BubbleSpaceApi.ApplicationTests\BubbleSpaceApi.ApplicationTests.csproj", "{F9219388-E768-455C-923A-E12C58D03F11}"
 EndProject

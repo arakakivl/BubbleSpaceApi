@@ -1,10 +1,10 @@
 using Moq;
 using Xunit;
 using BubbleSpaceApi.Application.Queries.GetProfileQuery;
-using BubbleSpaceApi.Core.Interfaces;
+using BubbleSpaceApi.Domain.Interfaces;
 using BubbleSpaceApi.Application.Models.ViewModels;
-using BubbleSpaceApi.Core.Exceptions;
-using BubbleSpaceApi.Core.Entities;
+using BubbleSpaceApi.Domain.Exceptions;
+using BubbleSpaceApi.Domain.Entities;
 
 namespace BubbleSpaceApi.ApplicationTests.Queries;
 

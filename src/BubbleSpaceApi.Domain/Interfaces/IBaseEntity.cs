@@ -1,4 +1,4 @@
-namespace BubbleSpaceApi.Core.Interfaces;
+namespace BubbleSpaceApi.Domain.Interfaces;
 
 public interface IBaseEntity<TKey>
 {

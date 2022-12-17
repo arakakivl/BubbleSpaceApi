@@ -1,6 +1,6 @@
-using BubbleSpaceApi.Core.Exceptions;
-using BubbleSpaceApi.Core.Entities;
-using BubbleSpaceApi.Core.Interfaces;
+using BubbleSpaceApi.Domain.Exceptions;
+using BubbleSpaceApi.Domain.Entities;
+using BubbleSpaceApi.Domain.Interfaces;
 using MediatR;
 
 namespace BubbleSpaceApi.Application.Commands.AnswerQuestionCommand;

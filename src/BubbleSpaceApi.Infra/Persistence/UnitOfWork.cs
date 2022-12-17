@@ -1,5 +1,5 @@
-using BubbleSpaceApi.Core.Interfaces;
-using BubbleSpaceApi.Core.Interfaces.Repositories;
+using BubbleSpaceApi.Domain.Interfaces;
+using BubbleSpaceApi.Domain.Interfaces.Repositories;
 using BubbleSpaceApi.Infra.Persistence.Repositories;
 
 namespace BubbleSpaceApi.Infra.Persistence;

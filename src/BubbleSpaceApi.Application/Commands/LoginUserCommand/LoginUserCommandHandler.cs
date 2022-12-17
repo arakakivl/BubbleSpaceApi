@@ -1,4 +1,4 @@
-using BubbleSpaceApi.Core.Interfaces;
+using BubbleSpaceApi.Domain.Interfaces;
 using MediatR;
 using BubbleSpaceApi.Application.Common;
 

@@ -1,4 +1,4 @@
-using BubbleSpaceApi.Core.Exceptions;
+using BubbleSpaceApi.Domain.Exceptions;
 using BubbleSpaceApi.Application.Queries.GetProfileQuery;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

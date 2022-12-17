@@ -1,6 +1,6 @@
-using BubbleSpaceApi.Core.Interfaces;
+using BubbleSpaceApi.Domain.Interfaces;
 
-namespace BubbleSpaceApi.Core.Entities;
+namespace BubbleSpaceApi.Domain.Entities;
 
 public class Profile : BaseEntity<Guid>
 {

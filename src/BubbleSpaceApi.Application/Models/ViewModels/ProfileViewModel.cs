@@ -1,4 +1,4 @@
-using BubbleSpaceApi.Core.Entities;
+using BubbleSpaceApi.Domain.Entities;
 
 namespace BubbleSpaceApi.Application.Models.ViewModels;
 

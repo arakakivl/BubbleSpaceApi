@@ -1,4 +1,4 @@
-using BubbleSpaceApi.Core.Interfaces;
+using BubbleSpaceApi.Domain.Interfaces;
 using FluentValidation;
 
 namespace BubbleSpaceApi.Application.Models.InputModels.AskQuestionModel;

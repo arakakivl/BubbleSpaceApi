@@ -1,4 +1,4 @@
-namespace BubbleSpaceApi.Core.Exceptions;
+namespace BubbleSpaceApi.Domain.Exceptions;
 
 public class AlreadyAnsweredQuestionException : Exception
 {

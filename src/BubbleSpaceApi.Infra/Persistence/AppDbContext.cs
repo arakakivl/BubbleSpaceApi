@@ -1,5 +1,5 @@
-using BubbleSpaceApi.Core.Entities;
-using BubbleSpaceApi.Core.Interfaces;
+using BubbleSpaceApi.Domain.Entities;
+using BubbleSpaceApi.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BubbleSpaceApi.Infra.Persistence;

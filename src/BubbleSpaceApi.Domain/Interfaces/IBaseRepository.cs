@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
-using BubbleSpaceApi.Core.Entities;
+using BubbleSpaceApi.Domain.Entities;
 
-namespace BubbleSpaceApi.Core.Interfaces;
+namespace BubbleSpaceApi.Domain.Interfaces;
 
 public interface IBaseRepository<TKey, TEntity> where TEntity : BaseEntity<TKey>
 {

@@ -1,5 +1,5 @@
 using BubbleSpaceApi.Application.Models.ViewModels;
-using BubbleSpaceApi.Core.Entities;
+using BubbleSpaceApi.Domain.Entities;
 
 namespace BubbleSpaceApi.Application.Common;
 

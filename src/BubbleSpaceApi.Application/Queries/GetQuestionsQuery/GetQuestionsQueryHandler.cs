@@ -1,5 +1,5 @@
 using BubbleSpaceApi.Application.Models.ViewModels;
-using BubbleSpaceApi.Core.Interfaces;
+using BubbleSpaceApi.Domain.Interfaces;
 using BubbleSpaceApi.Application.Common;
 using MediatR;
 

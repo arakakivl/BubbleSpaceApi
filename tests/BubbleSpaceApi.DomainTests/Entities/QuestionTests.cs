@@ -1,7 +1,7 @@
-using BubbleSpaceApi.Core.Entities;
+using BubbleSpaceApi.Domain.Entities;
 using Xunit;
 
-namespace BubbleSpaceApi.CoreTests.Entities;
+namespace BubbleSpaceApi.DomainTests.Entities;
 
 public class QuestionTests
 {

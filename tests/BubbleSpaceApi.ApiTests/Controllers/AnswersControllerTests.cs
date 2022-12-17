@@ -3,7 +3,7 @@ using BubbleSpaceApi.Api.Controllers;
 using BubbleSpaceApi.Application.Commands.AnswerQuestionCommand;
 using BubbleSpaceApi.Application.Commands.DeleteAnswerCommand;
 using BubbleSpaceApi.Application.Commands.DeleteQuestionCommand;
-using BubbleSpaceApi.Core.Exceptions;
+using BubbleSpaceApi.Domain.Exceptions;
 using BubbleSpaceApi.Application.Models.InputModels.AnswerQuestionModel;
 using BubbleSpaceApi.Application.Models.ViewModels;
 using MediatR;

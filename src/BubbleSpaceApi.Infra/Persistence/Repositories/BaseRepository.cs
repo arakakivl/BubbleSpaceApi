@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
-using BubbleSpaceApi.Core.Entities;
-using BubbleSpaceApi.Core.Interfaces;
+using BubbleSpaceApi.Domain.Entities;
+using BubbleSpaceApi.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BubbleSpaceApi.Infra.Persistence.Repositories;
@@ -28,10 +28,10 @@ public class BaseRepository<TKey, TEntity> : IBaseRepository<TKey, TEntity> wher
     {
         IQueryable<TEntity> query = _dbSet;
         if (filter is not null)
-            query = query.Where(filter);
+            query = query.AsNoTracking().Where(filter);
         
         foreach(var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            query = query.Include(includeProp);
+            query = query.AsNoTracking().Include(includeProp);
         
         return await Task.FromResult(query);
     }

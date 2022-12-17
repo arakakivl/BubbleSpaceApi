@@ -1,7 +1,7 @@
 using BubbleSpaceApi.Application.Models.ViewModels;
 using BubbleSpaceApi.Application.Queries.GetQuestionsQuery;
-using BubbleSpaceApi.Core.Entities;
-using BubbleSpaceApi.Core.Interfaces;
+using BubbleSpaceApi.Domain.Entities;
+using BubbleSpaceApi.Domain.Interfaces;
 using Moq;
 using Xunit;
 

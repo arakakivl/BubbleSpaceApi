@@ -1,5 +1,5 @@
-using BubbleSpaceApi.Core.Entities;
-using BubbleSpaceApi.Core.Interfaces;
+using BubbleSpaceApi.Domain.Entities;
+using BubbleSpaceApi.Domain.Interfaces;
 using MediatR;
 
 namespace BubbleSpaceApi.Application.Commands.AskQuestionCommand;

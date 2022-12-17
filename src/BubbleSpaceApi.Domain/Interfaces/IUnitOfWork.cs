@@ -1,6 +1,6 @@
-using BubbleSpaceApi.Core.Interfaces.Repositories;
+using BubbleSpaceApi.Domain.Interfaces.Repositories;
 
-namespace BubbleSpaceApi.Core.Interfaces;
+namespace BubbleSpaceApi.Domain.Interfaces;
 
 public interface IUnitOfWork
 {

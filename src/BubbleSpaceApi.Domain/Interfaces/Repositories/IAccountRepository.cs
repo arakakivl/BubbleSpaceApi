@@ -1,6 +1,6 @@
-using BubbleSpaceApi.Core.Entities;
+using BubbleSpaceApi.Domain.Entities;
 
-namespace BubbleSpaceApi.Core.Interfaces.Repositories;
+namespace BubbleSpaceApi.Domain.Interfaces.Repositories;
 
 public interface IAccountRepository : IBaseRepository<Guid, Account>
 {

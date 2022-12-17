@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BubbleSpaceApi.Core\BubbleSpaceApi.Core.csproj" />
+    <ProjectReference Include="..\BubbleSpaceApi.Domain\BubbleSpaceApi.Domain.csproj" />
     <ProjectReference Include="..\BubbleSpaceApi.Infra\BubbleSpaceApi.Infra.csproj" />
   </ItemGroup>
 
