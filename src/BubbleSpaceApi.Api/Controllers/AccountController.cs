@@ -6,6 +6,7 @@ using BubbleSpaceApi.Api.Auth;
 using BubbleSpaceApi.Application.Commands.LoginUserCommand;
 using Microsoft.AspNetCore.Authorization;
 using BubbleSpaceApi.Application.Models.InputModels.LoginUserModel;
+using BubbleSpaceApi.Core.Communication.Handlers;
 
 namespace BubbleSpaceApi.Api.Controllers;
 
@@ -13,7 +14,7 @@ namespace BubbleSpaceApi.Api.Controllers;
 public class AccountController : ApiControllerBase
 {
     private readonly IAuth _auth;
-    public AccountController(ISender sender, IAuth auth) : base(sender)
+    public AccountController(ISender sender, IAuth auth, IDomainNotificationHandler domainNotificationHandler) : base(sender, domainNotificationHandler)
     {
         _auth = auth;
     }

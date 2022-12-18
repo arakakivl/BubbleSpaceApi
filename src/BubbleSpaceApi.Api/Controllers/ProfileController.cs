@@ -3,12 +3,13 @@ using BubbleSpaceApi.Application.Queries.GetProfileQuery;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BubbleSpaceApi.Core.Communication.Handlers;
 
 namespace BubbleSpaceApi.Api.Controllers;
 
 public class ProfileController : ApiControllerBase
 {
-    public ProfileController(ISender sender) : base(sender)
+    public ProfileController(ISender sender, IDomainNotificationHandler domainNotificationHandler) : base(sender, domainNotificationHandler)
     {
 
     }

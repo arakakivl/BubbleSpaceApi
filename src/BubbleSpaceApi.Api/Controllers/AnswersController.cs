@@ -6,6 +6,7 @@ using BubbleSpaceApi.Application.Models.InputModels.AnswerQuestionModel;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BubbleSpaceApi.Core.Communication.Handlers;
 
 namespace BubbleSpaceApi.Api.Controllers;
 
@@ -14,7 +15,7 @@ public class AnswersController : ApiControllerBase
 {
     private readonly IAuth _auth;
 
-    public AnswersController(ISender sender, IAuth auth) : base(sender)
+    public AnswersController(ISender sender, IAuth auth, IDomainNotificationHandler domainNotificationHandler) : base(sender, domainNotificationHandler)
     {
         _auth = auth;
     }

@@ -1,3 +1,4 @@
+using BubbleSpaceApi.Core.Communication.Handlers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,9 +11,13 @@ public class ApiControllerBase : ControllerBase
     private ISender _sender = null!;
     public ISender Sender => _sender;
 
-    public ApiControllerBase(ISender sender)
+    private IDomainNotificationHandler _domainNotificationHandler;
+    public IDomainNotificationHandler DomainNotificationHandler => _domainNotificationHandler;
+
+    public ApiControllerBase(ISender sender, IDomainNotificationHandler domainNotificationHandler)
     {
         _sender = sender;
+        _domainNotificationHandler = domainNotificationHandler;
     }
 
     internal string GetAuthorizationBearerToken() =>
@@ -20,4 +25,7 @@ public class ApiControllerBase : ControllerBase
 
     internal string GetRefreshCookieToken() =>
         HttpContext.Request.Cookies.FirstOrDefault(x => x.Key == "bsrfh").Value;
+
+    internal bool HasNotifications() =>
+        _domainNotificationHandler.HasNotifications();
 }

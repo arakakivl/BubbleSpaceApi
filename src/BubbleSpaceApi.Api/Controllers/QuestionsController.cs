@@ -9,6 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using BubbleSpaceApi.Core.Communication.Handlers;
 
 namespace BubbleSpaceApi.Api.Controllers;
 
@@ -16,7 +17,7 @@ namespace BubbleSpaceApi.Api.Controllers;
 public class QuestionsController : ApiControllerBase
 {
     private readonly IAuth _auth;
-    public QuestionsController(ISender sender, IAuth auth) : base(sender)
+    public QuestionsController(ISender sender, IAuth auth, IDomainNotificationHandler domainNotificationHandler) : base(sender, domainNotificationHandler)
     {
         _auth = auth;
     }

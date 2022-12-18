@@ -6,18 +6,23 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
+using BubbleSpaceApi.Core.Communication.Handlers;
 
 namespace BubbleSpaceApi.ApiTests;
 
 public class ProfileControllerTests
 {
     private readonly Mock<ISender> _senderStub;
+    private readonly Mock<IDomainNotificationHandler> _domainNotificationHandlerStub;
+
     private readonly ProfileController _sut;
 
     public ProfileControllerTests()
     {
         _senderStub = new();
-        _sut = new(_senderStub.Object);
+        _domainNotificationHandlerStub = new();
+        
+        _sut = new(_senderStub.Object, _domainNotificationHandlerStub.Object);
     }
 
     [Fact]

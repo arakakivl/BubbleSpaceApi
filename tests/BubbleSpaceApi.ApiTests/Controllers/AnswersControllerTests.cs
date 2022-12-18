@@ -12,6 +12,7 @@ using Moq;
 using Xunit;
 using Microsoft.AspNetCore.Http;
 using AutoFixture;
+using BubbleSpaceApi.Core.Communication.Handlers;
 
 namespace BubbleSpaceApi.ApiTests;
 
@@ -21,6 +22,7 @@ public class AnswersControllerTests
 
     private readonly Mock<ISender> _senderStub;
     private readonly Mock<IAuth> _authStub;
+    private readonly Mock<IDomainNotificationHandler> _domainNotificationHandlerStub;
 
     private readonly AnswersController _sut;
 
@@ -33,8 +35,9 @@ public class AnswersControllerTests
 
         _senderStub = new();
         _authStub = new();
+        _domainNotificationHandlerStub = new();
 
-        _sut = new(_senderStub.Object, _authStub.Object)
+        _sut = new(_senderStub.Object, _authStub.Object, _domainNotificationHandlerStub.Object)
         {
             ControllerContext = new ControllerContext()
             {

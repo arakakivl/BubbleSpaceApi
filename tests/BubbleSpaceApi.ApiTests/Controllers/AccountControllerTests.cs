@@ -6,6 +6,7 @@ using BubbleSpaceApi.Api.Controllers;
 using BubbleSpaceApi.Application.Commands.LoginUserCommand;
 using BubbleSpaceApi.Application.Models.InputModels.LoginUserModel;
 using BubbleSpaceApi.Application.Models.InputModels.RegisterUserModel;
+using BubbleSpaceApi.Core.Communication.Handlers;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,7 @@ public class AccountControllerTests
 
     private readonly Mock<ISender> _senderStub;
     private readonly Mock<IAuth> _authStub;
+    private readonly Mock<IDomainNotificationHandler> _domainNotificationHandlerStub;
 
     private readonly AccountController _sut;
 
@@ -34,8 +36,9 @@ public class AccountControllerTests
 
         _senderStub = new();
         _authStub = new();
+        _domainNotificationHandlerStub = new();
 
-        _sut = new(_senderStub.Object, _authStub.Object)
+        _sut = new(_senderStub.Object, _authStub.Object, _domainNotificationHandlerStub.Object)
         {
             ControllerContext = new ControllerContext()
             {
