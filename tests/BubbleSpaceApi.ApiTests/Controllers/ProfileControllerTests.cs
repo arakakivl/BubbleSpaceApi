@@ -20,11 +20,6 @@ public class ProfileControllerTests
         _sut = new(_senderStub.Object);
     }
 
-    /* 
-        Some method endpoints cannot be executed if their model isn't on the required pattern
-        By FluentValidations 
-    */
-
     [Fact]
     public async Task GetByUsernameAsync_ShouldReturnOkWithProfile_WhenProfileNFound()
     {
@@ -39,7 +34,7 @@ public class ProfileControllerTests
         Assert.IsType<OkObjectResult>(result);
 
         Assert.NotNull(result!.Value);
-        Assert.IsType<ProfileViewModel>(result.Value);
+        Assert.IsType<ResultViewModel>(result.Value);
     }
 
     [Fact]
@@ -54,5 +49,6 @@ public class ProfileControllerTests
 
         // Assert
         Assert.IsType<NotFoundObjectResult>(result);
+        Assert.IsType<ResultViewModel>((result as NotFoundObjectResult)!.Value);
     }
 }

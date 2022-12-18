@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using AutoFixture;
 using BubbleSpaceApi.Api.Auth;
 using BubbleSpaceApi.Api.Controllers;
 using BubbleSpaceApi.Application.Commands.LoginUserCommand;
-using BubbleSpaceApi.Application.Models.InputModels.LoginUserInputModel;
+using BubbleSpaceApi.Application.Models.InputModels.LoginUserModel;
 using BubbleSpaceApi.Application.Models.InputModels.RegisterUserModel;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -17,6 +18,8 @@ namespace BubbleSpaceApi.ApiTests;
 
 public class AccountControllerTests
 {
+    private readonly Fixture _fixture;
+
     private readonly Mock<ISender> _senderStub;
     private readonly Mock<IAuth> _authStub;
 
@@ -24,6 +27,11 @@ public class AccountControllerTests
 
     public AccountControllerTests()
     {
+        _fixture = new();
+
+        _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(x => _fixture.Behaviors.Remove(x));
+        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
         _senderStub = new();
         _authStub = new();
 
@@ -43,20 +51,14 @@ public class AccountControllerTests
     public async Task RegisterAsync_ShouldReturnOk_WhenNotAuthenticated()
     {
         // Arrange
-        var model = new RegisterUserInputModel()
-        {
-            Username = "someuser",
-            Email = "someemail.com",
-            Password = "someuser123"
-        };
-
+        var model = _fixture.Build<RegisterUserInputModel>().With(x => x.Username, "username").With(x => x.Email, "email@email.com").Create();
         _authStub.Setup(x => x.IsAuthenticated(It.IsAny<string>())).Returns(false);
 
         // Act
         var result = await _sut.SignUpAsync(model);
 
         // Assert
-        Assert.IsType<OkResult>(result);
+        Assert.IsType<OkObjectResult>(result);
     }
 
     [Fact]
@@ -66,7 +68,7 @@ public class AccountControllerTests
         _authStub.Setup(x => x.IsAuthenticated(It.IsAny<string>())).Returns(true);
 
         // Act
-        var result = await _sut.SignUpAsync(new RegisterUserInputModel());
+        var result = await _sut.SignUpAsync(_fixture.Create<RegisterUserInputModel>());
 
         // Assert
         Assert.IsType<BadRequestObjectResult>(result);
@@ -76,11 +78,7 @@ public class AccountControllerTests
     public async Task LoginAsync_ShouldReturnOk_WhenValidCredentials()
     {
         // Arrange
-        var model = new LoginUserInputModel()
-        {
-            UsernameOrEmail = "someuser",
-            Password = "someuser123"
-        };
+        var model = _fixture.Build<LoginUserInputModel>().With(x => x.UsernameOrEmail, "username").With(x => x.Password, "password").Create();
 
         var profId = Guid.NewGuid();
         var claims = new Dictionary<string, string>() { { "ProfileId", profId.ToString() } };
@@ -103,11 +101,7 @@ public class AccountControllerTests
     public async Task LoginAsync_ShouldReturnBadRequest_WhenInvalidCredentials()
     {
         // Arrange
-        var model = new LoginUserInputModel()
-        {
-            UsernameOrEmail = "someuser",
-            Password = "someuser123"
-        };
+        var model = _fixture.Build<LoginUserInputModel>().With(x => x.UsernameOrEmail, "username").With(x => x.Password, "password").Create();
 
         _senderStub.Setup(x => x.Send(It.IsAny<LoginUserCommand>(), default)).ReturnsAsync(Guid.Empty);
         _authStub.Setup(x => x.IsAuthenticated(It.IsAny<string>())).Returns(false);
@@ -126,10 +120,24 @@ public class AccountControllerTests
         _authStub.Setup(x => x.IsAuthenticated(It.IsAny<string>())).Returns(true);
 
         // Act
-        var result = await _sut.SignInAsync(new LoginUserInputModel());
+        var result = await _sut.SignInAsync(_fixture.Create<LoginUserInputModel>());
 
         // Assert
         Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task LoginAsync_ShouldReturnUnprocessableEntity_WhenInvalidModelProvided()
+    {
+        // Arrange
+        _authStub.Setup(x => x.IsAuthenticated(It.IsAny<string>())).Returns(false);
+        var model = _fixture.Build<LoginUserInputModel>().With(x => x.UsernameOrEmail, "").Create();
+
+        // Act
+        var result = await _sut.SignInAsync(model);
+
+        // Assert
+        Assert.IsType<UnprocessableEntityObjectResult>(result);
     }
 
     [Fact]

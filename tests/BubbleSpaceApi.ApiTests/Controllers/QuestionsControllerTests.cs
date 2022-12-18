@@ -12,11 +12,14 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 using Microsoft.AspNetCore.Http;
+using AutoFixture;
 
 namespace BubbleSpaceApi.ApiTests;
 
 public class QuestionsControllerTests
 {
+    private readonly Fixture _fixture;
+
     private readonly Mock<ISender> _senderStub;
     private readonly Mock<IAuth> _authStub;
 
@@ -24,6 +27,11 @@ public class QuestionsControllerTests
 
     public QuestionsControllerTests()
     {
+        _fixture = new();
+
+        _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList().ForEach(x => _fixture.Behaviors.Remove(x));
+        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
         _senderStub = new();
         _authStub = new();
 
@@ -42,29 +50,46 @@ public class QuestionsControllerTests
     public async Task AskAsync_ShouldReturnCreatedAt_IfExecuted()
     {
         // Arrange
-        long id = 4;
+        var model = _fixture.Build<AskQuestionInputModel>().With(x => x.Title, "Question").Create();
+        var viewmodel = _fixture.Create<QuestionViewModel>();
 
         _authStub.Setup(x => x.GetProfileIdFromToken(It.IsAny<string>())).Returns(Guid.NewGuid());
-        _senderStub.Setup(x => x.Send(It.IsAny<AskQuestionCommand>(), default)).ReturnsAsync(id);
+        _senderStub.Setup(x => x.Send(It.IsAny<AskQuestionCommand>(), default)).ReturnsAsync(0);
 
-        _senderStub.Setup(x => x.Send(It.IsAny<GetQuestionQuery>(), default)).ReturnsAsync(new QuestionViewModel());
+        _senderStub.Setup(x => x.Send(It.IsAny<GetQuestionQuery>(), default)).ReturnsAsync(viewmodel);
 
         // Act
-        var result = await _sut.AskAsync(new AskQuestionInputModel() { Title = "Who is here?", Description = "" });
+        var result = await _sut.AskAsync(model);
         var okResult = result as CreatedAtActionResult;
 
         // Assert
         Assert.IsType<CreatedAtActionResult>(result);
         
         Assert.NotNull(okResult?.Value);
-        Assert.IsType<QuestionViewModel>(okResult?.Value);
+        Assert.IsType<ResultViewModel>(okResult?.Value);
+    }
+
+    [Fact]
+    public async Task AskAsync_ShouldReturnUnprocessableEntity_WhenInvalidModelProvided()
+    {
+        // Arrange
+        var model = _fixture.Build<AskQuestionInputModel>().With(x => x.Title, "").Create();
+        _authStub.Setup(x => x.GetProfileIdFromToken(It.IsAny<string>())).Returns(Guid.NewGuid());
+
+        // Act
+        var result = await _sut.AskAsync(model);
+
+        // Assert
+        Assert.IsType<UnprocessableEntityObjectResult>(result);
+        Assert.IsType<ResultViewModel>((result as ObjectResult)!.Value);
     }
 
     [Fact]
     public async Task GetAllAsync_ShouldReturnOkWithQuestions_WhenExecuted()
     {
         // Arrange
-        _senderStub.Setup(x => x.Send(It.IsAny<GetQuestionsQuery>(), default)).ReturnsAsync(new List<QuestionViewModel>());
+        var viewmodels = _fixture.CreateMany<QuestionViewModel>().ToList();
+        _senderStub.Setup(x => x.Send(It.IsAny<GetQuestionsQuery>(), default)).ReturnsAsync(viewmodels);
 
         // Act
         var result = await _sut.GetAllAsync();
@@ -72,7 +97,7 @@ public class QuestionsControllerTests
 
         // Assert
         Assert.IsType<OkObjectResult>(okResult);
-        Assert.IsAssignableFrom<ICollection<QuestionViewModel>>(okResult?.Value);
+        Assert.IsType<ResultViewModel>(okResult.Value);
     }
 
     [Fact]
@@ -87,9 +112,10 @@ public class QuestionsControllerTests
     
         // Assert
         Assert.IsType<OkObjectResult>(result);
+        Assert.IsType<ResultViewModel>(result.Value);
 
-        Assert.NotNull(result!.Value);
-        Assert.IsType<QuestionViewModel>(result.Value);
+        Assert.NotNull((result.Value as ResultViewModel)!.Data);
+        Assert.IsType<QuestionViewModel>((result.Value as ResultViewModel)!.Data);
     }
 
     [Fact]
@@ -104,6 +130,7 @@ public class QuestionsControllerTests
 
         // Assert
         Assert.IsType<NotFoundObjectResult>(result);
+        Assert.IsType<ResultViewModel>((result as ObjectResult)!.Value);
     }
 
     [Fact]
@@ -134,6 +161,7 @@ public class QuestionsControllerTests
 
         // Assert
         Assert.IsType<NotFoundObjectResult>(result);
+        Assert.IsType<ResultViewModel>((result as ObjectResult)!.Value);
     }
 
     [Fact]
@@ -150,5 +178,6 @@ public class QuestionsControllerTests
 
         // Assert
         Assert.IsType<UnauthorizedObjectResult>(result);
+        Assert.IsType<ResultViewModel>((result as ObjectResult)!.Value);
     }
 }

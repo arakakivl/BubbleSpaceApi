@@ -1,11 +1,11 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using BubbleSpaceApi.Application.Models.InputModels.RegisterUserModel;
-using BubbleSpaceApi.Application.Models.InputModels.LoginUserInputModel;
 using BubbleSpaceApi.Application.Commands.RegisterUserCommand;
 using BubbleSpaceApi.Api.Auth;
 using BubbleSpaceApi.Application.Commands.LoginUserCommand;
 using Microsoft.AspNetCore.Authorization;
+using BubbleSpaceApi.Application.Models.InputModels.LoginUserModel;
 
 namespace BubbleSpaceApi.Api.Controllers;
 
@@ -37,6 +37,8 @@ public class AccountController : ApiControllerBase
     {
         if (_auth.IsAuthenticated(GetAuthorizationBearerToken()) || _auth.IsAuthenticated(GetRefreshCookieToken()))
             return BadRequest("Você já está autenticado.");
+        else if (!model.IsValid())
+            return model.ReturnUnprocessableEntity();
 
         var cmd = new LoginUserCommand(model.UsernameOrEmail, model.Password);
         var profileId = await Sender.Send(cmd);

@@ -22,7 +22,7 @@ public class RegisterUserValidator : AbstractValidator<RegisterUserInputModel>
     public RegisterUserValidator()
     {
         // Username validation
-        RuleFor(user => user.Username.Trim()).Matches("")
+        RuleFor(user => user.Username.Trim()).NotEmpty()
             .WithMessage(invalidUsernameMessage);
 
         RuleFor(user => user.Username).MaximumLength(maxUsernameLength)
