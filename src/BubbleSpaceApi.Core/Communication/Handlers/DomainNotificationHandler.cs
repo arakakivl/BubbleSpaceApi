@@ -43,7 +43,7 @@ public class DomainNotificationHandler : IDomainNotificationHandler
         _notifications.Add(notification);
         await Task.CompletedTask;
     }
-
+    
     public bool HasNotifications() =>
         _notifications.Count > 0;
 }
