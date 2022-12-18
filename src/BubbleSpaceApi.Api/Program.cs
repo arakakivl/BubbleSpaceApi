@@ -4,6 +4,7 @@ using BubbleSpaceApi.Api.Auth;
 using BubbleSpaceApi.Application;
 using BubbleSpaceApi.Application.Commands.RegisterUserCommand;
 using BubbleSpaceApi.Application.Models.InputModels.RegisterUserModel;
+using BubbleSpaceApi.Core;
 using BubbleSpaceApi.Domain.Interfaces;
 using BubbleSpaceApi.Domain.Interfaces.Repositories;
 using BubbleSpaceApi.Infra;
@@ -18,6 +19,9 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+/// Notifications, Mediator and Handlers ///
+builder.Services.AddCoreServices();
 
 /// Data Access ///
 builder.Services.AddInfrastructureServices();
