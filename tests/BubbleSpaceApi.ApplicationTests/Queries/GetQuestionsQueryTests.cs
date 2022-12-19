@@ -1,5 +1,6 @@
 using BubbleSpaceApi.Application.Models.ViewModels;
 using BubbleSpaceApi.Application.Queries.GetQuestionsQuery;
+using BubbleSpaceApi.Core.Communication.Mediator;
 using BubbleSpaceApi.Domain.Entities;
 using BubbleSpaceApi.Domain.Interfaces;
 using Moq;
@@ -10,12 +11,16 @@ namespace BubbleSpaceApi.ApplicationTests.Queries;
 public class GetQuestionsQueryTests
 {
     private readonly Mock<IUnitOfWork> _unitOfWorkStub;
+    private readonly Mock<IMediatorHandler> _mediatorHandler;
+
     private readonly GetQuestionsQueryHandler _sut;
 
     public GetQuestionsQueryTests()
     {
         _unitOfWorkStub = new();
-        _sut = new(_unitOfWorkStub.Object);
+        _mediatorHandler = new();
+
+        _sut = new(_unitOfWorkStub.Object, _mediatorHandler.Object);
     }
 
     [Fact]

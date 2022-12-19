@@ -2,14 +2,18 @@ using BubbleSpaceApi.Application.Models.ViewModels;
 using BubbleSpaceApi.Domain.Interfaces;
 using BubbleSpaceApi.Application.Common;
 using MediatR;
+using BubbleSpaceApi.Core.Communication.Mediator;
 
 namespace BubbleSpaceApi.Application.Queries.GetQuestionsQuery;
 
 public class GetQuestionsQueryHandler : IRequestHandler<GetQuestionsQuery, ICollection<QuestionViewModel>>
 {
     private readonly IUnitOfWork _unitOfWork;
-    public GetQuestionsQueryHandler(IUnitOfWork unitOfWork)
+    private readonly IMediatorHandler _mediatorHandler;
+
+    public GetQuestionsQueryHandler(IUnitOfWork unitOfWork, IMediatorHandler mediatorHandler)
     {
+        _mediatorHandler = mediatorHandler;
         _unitOfWork = unitOfWork;
     }
 

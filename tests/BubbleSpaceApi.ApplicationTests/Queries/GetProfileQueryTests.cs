@@ -6,6 +6,7 @@ using BubbleSpaceApi.Application.Models.ViewModels;
 using BubbleSpaceApi.Domain.Exceptions;
 using BubbleSpaceApi.Domain.Entities;
 using AutoFixture;
+using BubbleSpaceApi.Core.Communication.Mediator;
 
 namespace BubbleSpaceApi.ApplicationTests.Queries;
 
@@ -14,6 +15,8 @@ public class GetProfileQueryTests
     private readonly Fixture _fixture;
 
     private readonly Mock<IUnitOfWork> _unitOfWorkStub;
+    private readonly Mock<IMediatorHandler> _mediatorHandler;
+
     private readonly GetProfileQueryHandler _sut;
 
     public GetProfileQueryTests()
@@ -24,7 +27,9 @@ public class GetProfileQueryTests
         _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
         _unitOfWorkStub = new();
-        _sut = new(_unitOfWorkStub.Object);
+        _mediatorHandler = new();
+
+        _sut = new(_unitOfWorkStub.Object, _mediatorHandler.Object);
     }
 
     [Fact]
