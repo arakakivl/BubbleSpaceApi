@@ -1,3 +1,4 @@
+using BubbleSpaceApi.Core.Communication.Mediator;
 using BubbleSpaceApi.Domain.Exceptions;
 using BubbleSpaceApi.Domain.Interfaces;
 using MediatR;
@@ -7,9 +8,12 @@ namespace BubbleSpaceApi.Application.Commands.DeleteQuestionCommand;
 public class DeleteQuestionCommandHandler : IRequestHandler<DeleteQuestionCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
-    public DeleteQuestionCommandHandler(IUnitOfWork unitOfWork)
+    private readonly IMediatorHandler _mediatorHandler;
+
+    public DeleteQuestionCommandHandler(IUnitOfWork unitOfWork, IMediatorHandler mediatorHandler)
     {
         _unitOfWork = unitOfWork;
+        _mediatorHandler = mediatorHandler;
     }
     
     public async Task<Unit> Handle(DeleteQuestionCommand request, CancellationToken cancellationToken)

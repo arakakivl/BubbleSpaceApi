@@ -1,6 +1,7 @@
 using AutoFixture;
 using BubbleSpaceApi.Application.Commands.LoginUserCommand;
 using BubbleSpaceApi.Application.Common;
+using BubbleSpaceApi.Core.Communication.Mediator;
 using BubbleSpaceApi.Domain.Entities;
 using BubbleSpaceApi.Domain.Interfaces;
 using Moq;
@@ -13,6 +14,8 @@ public class LoginUserCommandTests
     private readonly Fixture _fixture;
 
     private readonly Mock<IUnitOfWork> _unitOfWorkStub;
+    private readonly Mock<IMediatorHandler> _mediatorHandler;
+
     private readonly LoginUserCommandHandler _sut;
 
     public LoginUserCommandTests()
@@ -23,7 +26,9 @@ public class LoginUserCommandTests
         _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
         _unitOfWorkStub = new();
-        _sut = new(_unitOfWorkStub.Object);
+        _mediatorHandler = new();
+
+        _sut = new(_unitOfWorkStub.Object, _mediatorHandler.Object);
     }
 
     [Fact]

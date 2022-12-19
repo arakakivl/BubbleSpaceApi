@@ -1,5 +1,6 @@
 using AutoFixture;
 using BubbleSpaceApi.Application.Commands.AskQuestionCommand;
+using BubbleSpaceApi.Core.Communication.Mediator;
 using BubbleSpaceApi.Domain.Entities;
 using BubbleSpaceApi.Domain.Interfaces;
 using Moq;
@@ -12,6 +13,8 @@ public class AskQuestionCommandTests
     private readonly Fixture _fixture;
 
     private readonly Mock<IUnitOfWork> _unitOfWorkStub;
+    private readonly Mock<IMediatorHandler> _mediatorHandler;
+
     private readonly AskQuestionCommandHandler _sut;
 
     public AskQuestionCommandTests()
@@ -22,7 +25,9 @@ public class AskQuestionCommandTests
         _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
         _unitOfWorkStub = new();
-        _sut = new(_unitOfWorkStub.Object);
+        _mediatorHandler = new();
+
+        _sut = new(_unitOfWorkStub.Object, _mediatorHandler.Object);
     }
 
     [Fact]

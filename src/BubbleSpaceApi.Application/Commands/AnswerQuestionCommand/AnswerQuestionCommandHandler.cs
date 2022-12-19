@@ -2,15 +2,20 @@ using BubbleSpaceApi.Domain.Exceptions;
 using BubbleSpaceApi.Domain.Entities;
 using BubbleSpaceApi.Domain.Interfaces;
 using MediatR;
+using BubbleSpaceApi.Core.Communication.Mediator;
+using BubbleSpaceApi.Core.Communication.Messages.Notifications;
 
 namespace BubbleSpaceApi.Application.Commands.AnswerQuestionCommand;
 
 public class AnswerQuestionCommandHandler : IRequestHandler<AnswerQuestionCommand, Unit>
 {
     private readonly IUnitOfWork _unitOfWork;
-    public AnswerQuestionCommandHandler(IUnitOfWork unitOfWork)
+    private readonly IMediatorHandler _mediatorHandler;
+
+    public AnswerQuestionCommandHandler(IUnitOfWork unitOfWork, IMediatorHandler mediatorHandler)
     {
         _unitOfWork = unitOfWork;
+        _mediatorHandler = mediatorHandler;
     }
 
     public async Task<Unit> Handle(AnswerQuestionCommand request, CancellationToken cancellationToken)

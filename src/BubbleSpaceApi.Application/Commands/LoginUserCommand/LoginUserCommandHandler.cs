@@ -1,15 +1,19 @@
 using BubbleSpaceApi.Domain.Interfaces;
 using MediatR;
 using BubbleSpaceApi.Application.Common;
+using BubbleSpaceApi.Core.Communication.Mediator;
 
 namespace BubbleSpaceApi.Application.Commands.LoginUserCommand;
 
 public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, Guid>
 {
     private readonly IUnitOfWork _unitOfWork;
-    public LoginUserCommandHandler(IUnitOfWork unitOfWork)
+    private readonly IMediatorHandler _mediatorHandler;
+
+    public LoginUserCommandHandler(IUnitOfWork unitOfWork, IMediatorHandler mediatorHandler)
     {
         _unitOfWork = unitOfWork;
+        _mediatorHandler = mediatorHandler;
     }
     
     public async Task<Guid> Handle(LoginUserCommand request, CancellationToken cancellationToken)
